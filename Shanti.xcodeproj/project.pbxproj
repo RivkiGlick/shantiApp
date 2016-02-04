@@ -250,10 +250,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1E9710AF1C106152002000B1 /* ChooseLoginWayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChooseLoginWayViewController.swift; path = ../ChooseLoginWayViewController.swift; sourceTree = "<group>"; };
+		1E9710AF1C106152002000B1 /* ChooseLoginWayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseLoginWayViewController.swift; sourceTree = "<group>"; };
 		1E9710B01C106152002000B1 /* ConfirmeProfilePictureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConfirmeProfilePictureViewController.swift; path = ../ConfirmeProfilePictureViewController.swift; sourceTree = "<group>"; };
 		1E9710B11C106152002000B1 /* FillingDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FillingDetailsViewController.swift; path = ../FillingDetailsViewController.swift; sourceTree = "<group>"; };
-		1E9710B21C106152002000B1 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ../LoginViewController.swift; sourceTree = "<group>"; };
+		1E9710B21C106152002000B1 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		1E9710B31C106152002000B1 /* ProfilePictureViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfilePictureViewController.swift; path = ../ProfilePictureViewController.swift; sourceTree = "<group>"; };
 		1E9710B41C106152002000B1 /* ProfileRegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileRegisterViewController.swift; path = ../ProfileRegisterViewController.swift; sourceTree = "<group>"; };
 		1E9710B51C106152002000B1 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RegisterViewController.swift; path = ../RegisterViewController.swift; sourceTree = "<group>"; };
@@ -595,16 +595,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1E9710C01C1061A5002000B1 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				1E9710AF1C106152002000B1 /* ChooseLoginWayViewController.swift */,
-				1E9710B21C106152002000B1 /* LoginViewController.swift */,
-			);
-			name = Login;
-			path = "untitled folder 2";
-			sourceTree = "<group>";
-		};
 		1E9710C11C1061CA002000B1 /* Register */ = {
 			isa = PBXGroup;
 			children = (
@@ -737,11 +727,11 @@
 		5163218E1A6691D6004C279E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				51ED7CB41C63588D0084D78E /* Login */,
 				51047F611C22ECC500724D5F /* Chat */,
 				51047F601C22EC8F00724D5F /* Information */,
 				51047F5F1C22EB3000724D5F /* Group */,
 				51047F5E1C22EAF500724D5F /* Main */,
-				1E9710C01C1061A5002000B1 /* Login */,
 				1E9710C11C1061CA002000B1 /* Register */,
 				1E9710C21C10651A002000B1 /* UserProfileViewController.swift */,
 				519B732B1ABAD407002DE9DF /* SplashViewController.swift */,
@@ -1065,6 +1055,15 @@
 			);
 			name = FrameWork;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		51ED7CB41C63588D0084D78E /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				1E9710B21C106152002000B1 /* LoginViewController.swift */,
+				1E9710AF1C106152002000B1 /* ChooseLoginWayViewController.swift */,
+			);
+			name = Login;
 			sourceTree = "<group>";
 		};
 		9483A00330402103B98E53F5 /* Pods */ = {
