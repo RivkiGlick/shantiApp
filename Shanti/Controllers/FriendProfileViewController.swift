@@ -241,10 +241,8 @@ class FriendProfileViewController: GlobalViewController {
         //        self.lblMoreAbout.hidden = true
     }
     
-    func setSubviewsFrames(){
-        //        let scrollViewPrivate = CGFloat(120)
-        //        let spaceFromRightPrivate = CGFloat(12)
-        //      let spaceFromtop = spaceFromRightPrivate
+    func setSubviewsFrames()
+    {
         let viewImgS = CGFloat(100.5)
         let imgProfileS = CGFloat(96)
         let spaceBetweenViewImgToLbls = CGFloat(15)

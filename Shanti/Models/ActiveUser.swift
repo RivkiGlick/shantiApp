@@ -15,6 +15,7 @@ public class ActiveUser: User, UIAlertViewDelegate {
     class var sharedInstace: User{
         return singletonInstance
     }
+    var user:ActiveUser = ActiveUser()
     
     class func setUser(user: User){
         singletonInstance.iUserId = user.iUserId
@@ -51,9 +52,15 @@ public class ActiveUser: User, UIAlertViewDelegate {
         singletonInstance.image = ImageHandler.getImageBase64FromUrl(singletonInstance.nvImage)
         singletonInstance.waintingMessages = user.waintingMessages
     }
-
+    
     class func loginToQuickBloxWithCurrentUser(){
+//if isConnectedToNetwork() == true
+//{
+        let reachability: Reachability = Reachability.reachabilityForInternetConnection()
+        let networkStatus:ULONG = reachability.currentReachabilityStatus().value
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        if networkStatus != 0
+        {
 
         dispatch_async(dispatch_get_main_queue(),{
             // TODO: replace it with the user email & password
@@ -61,7 +68,8 @@ public class ActiveUser: User, UIAlertViewDelegate {
             extendedAuthRequest.userLogin = ActiveUser.sharedInstace.oUserQuickBlox.login
             extendedAuthRequest.userPassword = ActiveUser.sharedInstace.oUserQuickBlox.password
             
-            QBRequest.createSessionWithExtendedParameters(extendedAuthRequest, successBlock: {
+            QBRequest.createSessionWithExtendedParameters(extendedAuthRequest, successBlock:
+                {
                 response, session -> Void in
                 
                 println("Xmpp login success!")
@@ -76,33 +84,37 @@ public class ActiveUser: User, UIAlertViewDelegate {
                     println("ChatService login done!")
                     ActiveUser.sharedInstace.didLoginToQB = true
                     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                    appDelegate.isLoginQb=true
+                    appDelegate.isLoginQb = true
                     if let deviceToken = NSUserDefaults.standardUserDefaults().valueForKey("deviceTokenInData") as? NSData{
                         AppDelegate.registerForNotificationsInQuickBlox(deviceToken)
                     }
                 })
-                
                 }, errorBlock: {
                     response -> Void in
                     println("Xmpp login fail! response:\(response.error) \(response.status)")
-                    if response.status == QBResponseStatusCode.UnAuthorized || response.status == QBResponseStatusCode.ValidationFailed{
-                        var currView = (UIApplication.sharedApplication().windows[0] as! UIWindow).rootViewController! as! SWRevealViewController
-                        if  let navCont = currView.frontViewController as? UINavigationController{
-                            if let lastView: UIViewController = navCont.viewControllers[navCont.viewControllers.count - 1] as? UIViewController{
-                                var alert = UIAlertController(title: "שגיאה", message: "ארעה שגיאה ברישומך לצאט", preferredStyle: UIAlertControllerStyle.Alert)
-                                alert.addAction(UIAlertAction(title: "נסה להרשם לצאט שוב", style: UIAlertActionStyle.Cancel, handler: {
-                                    action in action.style
-                                    User.sighUpToXmpp(ActiveUser.sharedInstace)
-                                    ActiveUser.loginToQuickBloxWithCurrentUser()
+                    if response.status == QBResponseStatusCode.UnAuthorized || response.status == QBResponseStatusCode.ValidationFailed || response.status == QBResponseStatusCode.ServerError || response.status == QBResponseStatusCode.Unknown || response.status == QBResponseStatusCode.Accepted || response.status == QBResponseStatusCode.Created || response.status == QBResponseStatusCode.NotFound
+                    {
+//                        var currView = (UIApplication.sharedApplication().windows[0] as! UIWindow).rootViewController! as! SWRevealViewController
+//                        if  let navCont = currView.frontViewController as? UINavigationController{
+//                            if let lastView: UIViewController = navCont.viewControllers[navCont.viewControllers.count - 1] as? UIViewController{
+//                                var alert = UIAlertController(title: "שגיאה", message: "ארעה שגיאה ברישומך לצאט", preferredStyle: UIAlertControllerStyle.Alert)
+//                                alert.addAction(UIAlertAction(title: "נסה להרשם לצאט שוב", style: UIAlertActionStyle.Cancel, handler: {
+//                                    action in action.style
+//                                    User.sighUpToXmpp(ActiveUser.sharedInstace)
+//                                    ActiveUser.loginToQuickBloxWithCurrentUser()
                                     appDelegate.isLoginQbError=true
-                                }))
-                                
-                                alert.addAction(UIAlertAction(title: "בטל", style: UIAlertActionStyle.Default, handler:nil))
-                                lastView.presentViewController(alert, animated: true, completion: nil)
-                            }
-                        }
+//                                }))
+//                                
+//                                alert.addAction(UIAlertAction(title: "בטל", style: UIAlertActionStyle.Default, handler:nil))
+//                                lastView.presentViewController(alert, animated: true, completion: nil)
+//                                appDelegate.timer.invalidate()
+//                            }
+//                        }
                         
-                    }else{
+                    }
+                    else
+                    {
+                        appDelegate.timer.invalidate()
                         var currView = (UIApplication.sharedApplication().windows[0] as! UIWindow).rootViewController! as! SWRevealViewController
                         if  let navCont = currView.frontViewController as? UINavigationController{
                             if let lastView: UIViewController = navCont.viewControllers[navCont.viewControllers.count - 1] as? UIViewController{
@@ -111,8 +123,9 @@ public class ActiveUser: User, UIAlertViewDelegate {
                                     action in action.style
                                     ActiveUser.loginToQuickBloxWithCurrentUser()
                                     }))
-                                
-                                alert.addAction(UIAlertAction(title: "בטל", style: UIAlertActionStyle.Cancel, handler:nil))
+//                                alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+//                               lastView.presentViewController(alert, animated: true, completion: nil)
+//                                alert.addAction(UIAlertAction(title: "בטל", style: UIAlertActionStyle.Cancel, handler:nil))
                                 lastView.presentViewController(alert, animated: true, completion: nil)
                             }
                         }
@@ -121,6 +134,34 @@ public class ActiveUser: User, UIAlertViewDelegate {
                     }
             })
         })
+       }
+        
+        else
+        {
+            print("no internet")
+        }
+    }
+    
+    func isConnectedToNetwork()->Bool{
+        
+        var Status:Bool = false
+        let url = NSURL(string: "http://google.com/")
+        let request = NSMutableURLRequest(URL: url!)
+        request.HTTPMethod = "HEAD"
+        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalAndRemoteCacheData
+        request.timeoutInterval = 10.0
+        
+        var response: NSURLResponse?
+        
+        var data = NSURLConnection.sendSynchronousRequest(request, returningResponse: &response, error: nil) as NSData?
+        
+        if let httpResponse = response as? NSHTTPURLResponse {
+            if httpResponse.statusCode == 200 {
+                Status = true
+            }
+        }
+        
+        return Status
     }
     
     class func sendDeviceTokenToServer()
@@ -150,7 +191,7 @@ public class ActiveUser: User, UIAlertViewDelegate {
     }
     
     class func GetUserGroupsAsMain(){
-        Connection.connectionToService("GetUserGroupsAsMain", params: ["id":ActiveUser.sharedInstace.iUserId], completion: {
+        Connection.connectionToService("GetUserGroupsAsMain",params: ["id":ActiveUser.sharedInstace.iUserId], completion: {
             data -> Void in
             var strData = NSString(data: data, encoding: NSUTF8StringEncoding)
             println("GetUserGroupsAsMain:\(strData)")
@@ -164,7 +205,7 @@ public class ActiveUser: User, UIAlertViewDelegate {
         ActiveUser.sharedInstace.waintingMessages = counter
         
         if ActiveUser.sharedInstace.delegate != nil{
-            ActiveUser.sharedInstace.delegate?.changeWaintingMessagesCounter(counter)
+    ActiveUser.sharedInstace.delegate?.changeWaintingMessagesCounter(counter)
         }
     }
   

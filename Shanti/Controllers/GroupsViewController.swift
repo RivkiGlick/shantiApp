@@ -48,6 +48,17 @@ class GroupsViewController: GlobalViewController,UITableViewDataSource,UITableVi
         }
     }
     
+    override func viewWillLayoutSubviews() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    func rotated()
+    {
+        self.tableView.reloadData()
+        
+    }
+
+    
     func getGroupsFromServer(){
         self.tableView.backgroundColor = UIColor.offwhiteDark()
         //        var generic = Generic()
@@ -175,17 +186,18 @@ class GroupsViewController: GlobalViewController,UITableViewDataSource,UITableVi
     
     func getToMainMap(sender: AnyObject){
         var controllers = self.navigationController?.viewControllers as [AnyObject]!
-        //FIXME: in order to move to map 10.11
-        
-        //        for view in controllers{
-        //            if view.isKindOfClass(MainPage){
-        //                self.navigationController?.popToViewController(view as! UIViewController, animated: true)
-        //            }
-        // }
-        
         
         let mainPage: MainPage = self.storyboard!.instantiateViewControllerWithIdentifier("MainPageId") as! MainPage
         self.navigationController!.pushViewController(mainPage, animated: true)
+    }
+     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if (editingStyle == UITableViewCellEditingStyle.Delete) {
+            // handle delete (by removing the data from your array and updating the tableview)
+        }
     }
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath){
@@ -221,6 +233,8 @@ class GroupsViewController: GlobalViewController,UITableViewDataSource,UITableVi
         return cell
     }
     
+
+    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
         if ActiveUser.sharedInstace.didLoginToQB == true{
             let currGroup: Group = self.groupsList.objectAtIndex(indexPath.row) as! Group
@@ -244,6 +258,8 @@ class GroupsViewController: GlobalViewController,UITableViewDataSource,UITableVi
         }
     }
     
+    
+        
     func downloadImageFromServer(){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
             for currGroup in self.groupsList{
@@ -263,6 +279,7 @@ class GroupsViewController: GlobalViewController,UITableViewDataSource,UITableVi
         
     }
     
+    
     func addInfoViews(){
         viewNoGroups.backgroundColor = UIColor.clearColor()
         
@@ -271,7 +288,7 @@ class GroupsViewController: GlobalViewController,UITableViewDataSource,UITableVi
         
         
         var lblInfo = UILabel()
-        lblInfo.text = (NSLocalizedString("You do not have groups, presently.", comment: "") as String) + "," + (NSLocalizedString(".Begin creating groups", comment: "") as String)/*"אין לך קבוצות כעת.\nהתחל ביצירת קבוצות"*/
+        lblInfo.text = (NSLocalizedString("You do not have groups, presently.Begin creating groups", comment: "") as String)/*"אין לך קבוצות כעת.\nהתחל ביצירת קבוצות"*/
         lblInfo.font = UIFont(name: "spacer", size: 15)
         lblInfo.textColor = UIColor.grayLight()
         lblInfo.lineBreakMode = NSLineBreakMode.ByCharWrapping

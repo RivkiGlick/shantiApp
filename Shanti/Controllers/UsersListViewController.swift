@@ -22,7 +22,7 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
     var usersListDistance: NSMutableDictionary = NSMutableDictionary()//helper list to sort by distance/key
     var usersListOnline: NSMutableDictionary = NSMutableDictionary()//helper list to save online users
     
-    var generic = Generic()
+    
     var usersListArray: NSMutableArray = NSMutableArray()
     var usersList: NSMutableArray = NSMutableArray()
     var usersList1:[User] = []
@@ -38,22 +38,24 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
     var currUserChat:User=User()
     var didLogin:Bool=Bool()
     var index = Int()
+    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     
     //MARK: ViewController Delegate
     override func viewDidLoad() {
         
         
         super.viewDidLoad()
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+//        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         appDelegate.timer=NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "update", userInfo: nil, repeats: true)
+//
         ActiveUser.loginToQuickBloxWithCurrentUser()
         
         tableView.hidden = true
         
         self.pageDesign()
+         appDelegate.generic.showNativeActivityIndicator(self)
         
-        self.generic.showNativeActivityIndicator(self)
         self.SetDelegate()
     }
     
@@ -110,7 +112,6 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
         
     }
     
-    
     func SetDelegate()
     {
         txtSearch.delegate = self
@@ -120,7 +121,7 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
     }
     func GetUserList()//function that init list with userlist in appDelegate
     {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+//        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         if appDelegate.arrayUsers.count>0
         {
             self.usersListArray.removeAllObjects()
@@ -157,7 +158,7 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
             alert.addAction(UIAlertAction(title: NSLocalizedString("Confirmation", comment: "") as String /*"אישור"*/, style: UIAlertActionStyle.Default,handler: nil))
             
             self.presentViewController(alert, animated: true, completion: nil)
-            self.generic.hideNativeActivityIndicator(self)
+            appDelegate.generic.hideNativeActivityIndicator(self)
             
         }
     }
@@ -197,43 +198,64 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
     }
     
     func update() {
-        var generic = Generic()
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+//        var generic = Generic()
+//        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.timerCount++
-        println(" appDelegate.timerCount++:\(appDelegate.timerCount)")
+        println("appDelegate.timerCount++:\(appDelegate.timerCount)")
         
         if appDelegate.isLoginQb
         {
-            // let mainPage: UsersListViewController = self.storyboard!.instantiateViewControllerWithIdentifier("UsersListViewControllerID") as! UsersListViewController
-            //  frontNavigationController = UINavigationController(rootViewController: mainPage)
             dispatch_async(dispatch_get_main_queue(),{
                 self.GetUserList()
-                
+                self.appDelegate.generic.hideNativeActivityIndicator(self)
                 //MARK: ADD IN SYNCRONIZE
-                if appDelegate.messages.count==0
+                if self.appDelegate.messages.count==0
                 {
                     self.getMessagesFromQB()
+                    self.appDelegate.generic.hideNativeActivityIndicator(self)
                     
                 }
                 
             })
             
-            generic.hideNativeActivityIndicator(self)
+           
+            
+            appDelegate.generic.hideNativeActivityIndicator(self)
             appDelegate.timer.invalidate()
         }
         else
         {
-            if   appDelegate.timerCount==40
+            if appDelegate.isLoginQbError
             {
-                var alert = UIAlertController(title: "error", message: "login in quickblox failed", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "אישור", style: UIAlertActionStyle.Cancel, handler: {
-                    action -> Void in
-                    
-                    println()
-                }))
-                self.presentViewController(alert, animated: true, completion: nil)
-                
+                self.appDelegate.generic.hideNativeActivityIndicator(self)
+                var currView = (UIApplication.sharedApplication().windows[0] as! UIWindow).rootViewController! as! SWRevealViewController
+                if  let navCont = currView.frontViewController as? UINavigationController{
+                    if let lastView: UIViewController = navCont.viewControllers[navCont.viewControllers.count - 1] as? UIViewController{
+                        var alert = UIAlertController(title: "שגיאה", message: NSLocalizedString("Error signup chat" , comment: "") as String, preferredStyle: UIAlertControllerStyle.Alert)
+                        alert.addAction(UIAlertAction(title: "נסה להרשם לצאט שוב", style: UIAlertActionStyle.Cancel, handler: {
+                            action in action.style
+                            self.appDelegate.generic.showNativeActivityIndicator(self)
+                            User.sighUpToXmpp(ActiveUser.sharedInstace)
+                            ActiveUser.loginToQuickBloxWithCurrentUser()
+                        }))
+                        
+                        alert.addAction(UIAlertAction(title: "בטל", style: UIAlertActionStyle.Default, handler:nil))
+                        lastView.presentViewController(alert, animated: true, completion: nil)
+                        appDelegate.timer.invalidate()
+                    }
+                }
             }
+//            if   appDelegate.timerCount == 40
+//            {
+//                var alert = UIAlertController(title: "error", message: "login in quickblox failed", preferredStyle: UIAlertControllerStyle.Alert)
+//                alert.addAction(UIAlertAction(title: "אישור", style: UIAlertActionStyle.Cancel, handler: {
+//                    action -> Void in
+//                    
+//                    println()
+//                }))
+//                self.presentViewController(alert, animated: true, completion: nil)
+//                
+//            }
         }
         // Something cool
     }
@@ -643,7 +665,7 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
                 {
                     isUpdateLocation=true
                     self.tableView.hidden=false
-                    self.generic.hideNativeActivityIndicator(self)
+                    appDelegate.generic.hideNativeActivityIndicator(self)
                     self.tableView.reloadData()
                 }
                 
@@ -670,14 +692,14 @@ class UsersListViewController: GlobalViewController,UITableViewDelegate,UITableV
                 self.updateUsersDistance()
                 self.updateUsersOnline()
                 self.tableView.reloadData()
-                self.generic.hideNativeActivityIndicator(self)
+                appDelegate.generic.hideNativeActivityIndicator(self)
                 self.tableView.hidden=false
             }
             if(self.usersListDistance.count>0)
             {
                 isUpdateLocation=true
                 self.tableView.hidden=false
-                self.generic.hideNativeActivityIndicator(self)
+                appDelegate.generic.hideNativeActivityIndicator(self)
                 self.tableView.reloadData()
             }
             

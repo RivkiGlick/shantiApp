@@ -41,7 +41,7 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
     var chatRoom: QBChatRoom? = QBChatRoom()
     var messages: NSMutableArray = NSMutableArray()
     var imgsDict: NSMutableDictionary = NSMutableDictionary()
-    let buttomViewNormalY = CGFloat(UIScreen.mainScreen().bounds.height - 50)
+    var buttomViewNormalY = CGFloat()//(UIScreen.mainScreen().bounds.height - 50)
     var attachments = NSMutableDictionary()
     var largeAttachments = NSMutableDictionary()
     var library: ALAssetsLibrary = ALAssetsLibrary()
@@ -76,13 +76,16 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
     let imgBgH = CGFloat(225.0)
     let searchBtnSize =  CGFloat(46.0)
     let cellH = CGFloat(50.0)
-    
+    var viewNormal = CGFloat()
     
     var flg: Bool = false
+    var addFriensTaped = false;
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        viewNormal = view.frame.size.height
+        buttomViewNormalY = CGFloat(UIScreen.mainScreen().bounds.height - 50)
+        self.txtMessage.delegate = self
         if self.currGroup.UsersList.count == 0{
             self.getGroupById()
         }else{
@@ -96,6 +99,21 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
     }
      override func viewDidAppear(animated: Bool) {
        //super.viewDidAppear(true)
+    }
+    
+    override func viewWillLayoutSubviews()
+    {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    
+    func rotated()
+    {
+        viewNormal = view.frame.size.height
+        buttomViewNormalY = CGFloat(UIScreen.mainScreen().bounds.height - 50)
+        self.txtMessage.delegate = self
+        self.setSubviewsConfig()
+        self.getDownloadedAttachmentDict()
     }
     
     override func didReceiveMemoryWarning() {
@@ -116,9 +134,10 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
     }
     
     func setSubviewsConfig(){
-        //        var tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard:")
-        //        tap.delegate = self
-        //        self.view.addGestureRecognizer(tap)
+                var tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard:")
+                tap.delegate = self
+                self.view.addGestureRecognizer(tap)
+    
         self.setChatSettings()
         generic.showNativeActivityIndicator(self)
         var params: NSMutableDictionary = ["limit":100,"sort_desc":"date_sent"]
@@ -128,6 +147,10 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         self.setSubviewsGraphics()
         self.setSubviewsFrames()
         self.setDelegates()
+        if addFriensTaped == true
+        {
+            self.addFriends(nil)
+        }
         
     }
     
@@ -182,7 +205,7 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         self.imgProfile.clipsToBounds = true
         
         //top view
-        self.topView.backgroundColor = UIColor.whiteColor()
+        self.topView.backgroundColor = UIColor.clearColor()
         
         self.scrollView.backgroundColor = UIColor.clearColor()
         
@@ -269,7 +292,8 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         self.lblNoFriends.backgroundColor = UIColor.clearColor()
         self.lblNoFriends.textColor = titlesColor
         self.lblNoFriends.font = titlesFont
-        self.lblNoFriends.text = NSLocalizedString("You have no friends group", comment: "")
+       // self.lblNoFriends.text = NSLocalizedString("B" , comment: "")
+        self.lblNoFriends.text = NSLocalizedString("no friend",comment: "") as String
         self.lblNoFriends.sizeToFit()
 //        self.lblNoFriends.hidden = true
         self.view.addSubview(lblNoFriends)
@@ -308,7 +332,7 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         self.txtMail1.backgroundColor = UIColor.whiteColor()
         self.txtMail1.textColor = titlesColor
         self.txtMail1.font = titlesFont
-        self.txtMail1.placeholder = NSLocalizedString("Search by name or Shanty name", comment: "")
+        self.txtMail1.placeholder = NSLocalizedString("Search by name or Shanti name", comment: "")
         self.txtMail1.textAlignment = NSTextAlignment.Right
         self.txtMail1.layer.borderColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1).CGColor
         self.txtMail1.layer.borderWidth = 1.5
@@ -364,10 +388,13 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         viewSeparation.frame = CGRectMake(0, self.topView.frame.size.height - 5, self.topView.frame.size.width, 5)
         
         //inside buttomView
+        if (self.navigationController != nil)
+        {
         self.buttomView.frame = CGRectMake(0,buttomViewNormalY - self.navigationController!.navigationBar.bounds.height - self.navigationController!.navigationBar.frame.origin.y, UIScreen.mainScreen().bounds.width, 50)
         self.btnAddAttachment.frame = CGRectMake(15, (self.buttomView.frame.size.height - 30)/2, 30, 30)
         self.btnSend.frame = CGRectMake(self.buttomView.frame.size.width - self.btnSend.backgroundImageForState(UIControlState.Normal)!.size.width/2, (self.buttomView.frame.size.height - self.btnSend.backgroundImageForState(UIControlState.Normal)!.size.height/2)/2, self.btnSend.backgroundImageForState(UIControlState.Normal)!.size.width/2, self.btnSend.backgroundImageForState(UIControlState.Normal)!.size.height/2)
         self.txtMessage.frame = CGRectMake(self.btnAddAttachment.frame.origin.x + self.btnAddAttachment.frame.size.width + 5, (self.buttomView.frame.size.height - self.txtMessage.frame.size.height)/2, self.btnSend.frame.origin.x - (self.btnAddAttachment.frame.origin.x + self.btnAddAttachment.frame.size.width + 5) - 5, self.txtMessage.frame.size.height)
+        }
         
         if self.currGroup.iNumOfMembers==1
         {
@@ -392,7 +419,7 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         
         self.scrollView.frame = CGRectMake(self.scrollView.frame.origin.x, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.txtMail1.frame.origin.y + self.txtMail1.frame.size.height)
         
-        self.lblNoFriends.frame = CGRectMake((self.view.frame.size.width - self.lblNoFriends.frame.size.width)/2, self.detailsView.frame.origin.y + self.detailsView.frame.size.height + self.scrollView.frame.size.height + 5, self.lblNoFriends.frame.size.width, self.lblNoFriends.frame.size.height)
+        self.lblNoFriends.frame = CGRectMake((self.view.frame.size.width - self.lblNoFriends.frame.size.width)/2, self.detailsView.frame.origin.y + self.detailsView.frame.size.height + 5, self.lblNoFriends.frame.size.width, self.lblNoFriends.frame.size.height)
         var w = (self.view.frame.size.width - txtsW)/2
         self.btnAddFriends.frame = CGRectMake(w, self.lblNoFriends.frame.origin.y + self.lblNoFriends.frame.size.height+5, txtsW, txtsH)
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, self.scrollView.frame.size.height)
@@ -410,6 +437,7 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
             self.btnProfile.hidden = true
             self.btnCreateMeetingPoint.hidden = true
             self.imgCreateMeetingPoint.hidden = true
+            self.buttomView.hidden = true
         }
         else
         {
@@ -421,13 +449,22 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
             self.btnProfile.hidden = false
             self.btnCreateMeetingPoint.hidden = false
             self.imgCreateMeetingPoint.hidden = false
+            self.buttomView.hidden = false
         }
     }
     
-    func addFriends(sender: AnyObject)
+    func addFriends(sender: AnyObject?)
     {
-            self.scrollView2.frame = CGRectMake(0, self.btnAddFriends.frame.origin.y + self.btnAddFriends.frame.size.height + 10, UIScreen.mainScreen().bounds.size.width, self.buttomView.frame.origin.y - (self.topView.frame.origin.y + self.topView.frame.size.height))
-        self.txtMail1.frame = CGRectMake(100, 50, mailTxtsW, txtsH)
+            let subviews = self.scrollView2.subviews as! [UIView]
+            for v in subviews {
+                if v.isKindOfClass(UIButtonSearch){
+                    v.removeFromSuperview()
+                }
+            }
+        
+        self.addFriensTaped = true
+            self.scrollView2.frame = CGRectMake(0, self.btnAddFriends.frame.origin.y + self.btnAddFriends.frame.size.height + 10,UIScreen.mainScreen().bounds.size.width,(self.topView.frame.origin.y + self.topView.frame.size.height))
+        self.txtMail1.frame = CGRectMake((UIScreen.mainScreen().bounds.size.width - txtsW)/2+spaceBetweenTxtToBtn + searchBtnSize, 50, mailTxtsW, txtsH)
         self.lblAddFriends.frame = CGRectMake(self.txtMail1.frame.origin.x + self.txtMail1.frame.size.width - self.lblAddFriends.frame.size.width, (self.txtMail1.frame.origin.y - self.lblAddFriends.frame.size.height)/2, self.lblAddFriends.frame.size.width, self.lblAddFriends.frame.size.height)
                 self.scrollView2.contentSize = CGSizeMake(self.scrollView.frame.size.width, self.scrollView.frame.size.height)
         
@@ -470,10 +507,10 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
     }
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool{
-        if textField == txtMail1{
-            self.view.frame = CGRectMake(self.view.frame.origin.x,self.view.frame.origin.y - 240, self.view.frame.size.width, self.view.frame.size.height)
-            
-        }
+//        if textField == txtMail1{
+//            self.view.frame = CGRectMake(self.view.frame.origin.x,self.view.frame.origin.y - 240, self.view.frame.size.width, self.view.frame.size.height)
+//            
+//        }
         return true
     }
     
@@ -481,15 +518,15 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         textField.resignFirstResponder()
         textField.backgroundColor = UIColor.whiteColor()
         textField.textColor = UIColor.grayMedium()
-        if textField == txtMail1{
-            self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 240, self.view.frame.size.width, self.view.frame.size.height)
-        }
+//        if textField == txtMail1{
+//            self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 240, self.view.frame.size.width, self.view.frame.size.height)
+//        }
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool{
-        self.dismissKeyboard(textField)
-        return true
-    }
+//    func textFieldShouldReturn(textField: UITextField) -> Bool{
+//        self.dismissKeyboard(textField)
+//        return true
+//    }
     
     func searhBtnClicked(sender: AnyObject){
         if let srchBtn = sender as? UIButtonSearch{
@@ -615,7 +652,7 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
             var senderName = String()
             if currMsg.attachments != nil && currMsg.attachments.count > 0{
                 currCell = tableView.dequeueReusableCellWithIdentifier("AttachmentTableViewCell", forIndexPath: indexPath) as! AttachmentTableViewCell
-                currCell.backgroundColor = UIColor.yellowColor()
+                currCell.backgroundColor = UIColor.whiteColor()
                 
                 var cell = currCell as! AttachmentTableViewCell
                 cell.del=self
@@ -934,9 +971,11 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         if result.success && result.isKindOfClass(QBChatHistoryMessageResult) {
             var res = result as! QBChatHistoryMessageResult
             var historyMessages = res.messages
-            if historyMessages != nil{
+            if historyMessages != nil
+            {
                 //                self.messages.addObjectsFromArray(historyMessages)
-                for i in 0...historyMessages.count - 1{ // sort asc
+                for i in 0...historyMessages.count - 1
+                { // sort asc
                     self.messages.addObject(historyMessages.objectAtIndex(historyMessages.count - 1 - i))
                 }
                 
@@ -983,24 +1022,25 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
         self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messages.count - 1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: false)
         
     }
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        
+        self.dismissKeyboard(textField)
+        return false
+    }
     
     func keyboardWillShow(notification: NSNotification){
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey]
             as? NSValue)?.CGRectValue() {
                 UIView.animateWithDuration(0.3, animations: {
-                    self.buttomView.frame = CGRectMake(self.buttomView.frame.origin.x,keyboardSize.origin.y - self.buttomView.frame.size.height - self.navigationController!.navigationBar.bounds.height - self.navigationController!.navigationBar.frame.origin.y, self.buttomView.frame.size.width, self.buttomView.frame.size.height)
-                    println("self.buttomView frame:\(self.buttomView)")
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - keyboardSize.height, self.view.frame.size.width, self.view.frame.size.height)
                 })
         }
     }
     
     func keyboardWillHide(notification: NSNotification){
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-            if self.buttomView.frame.origin.y != buttomViewNormalY{
-                UIView.animateWithDuration(0.3, animations: {
-                    self.buttomView.frame = CGRectMake(self.buttomView.frame.origin.x, self.buttomViewNormalY - self.navigationController!.navigationBar.bounds.height - self.navigationController!.navigationBar.frame.origin.y, self.buttomView.frame.size.width, self.buttomView.frame.size.height)
-                })
-            }
+             self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + keyboardSize.height, self.view.frame.size.width, self.view.frame.height)
         }
         
     }
@@ -1018,9 +1058,16 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
             
             ChatService.instance().sendMessage(currMessage, toRoom: self.chatRoom)
             self.sendUserDialogNotification(self.txtMessage.text)
-            self.txtMessage.text = nil
             
+        //self.tableView.hidden = false
+       // self.tableView.reloadData()
+            self.messages.addObject(currMessage)
+            self.txtMessage.text = nil
             self.tableView.reloadData()
+            if(self.messages.count > 0){
+                self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: self.messages.count-1, inSection: 0), atScrollPosition: UITableViewScrollPosition.Bottom, animated: false)
+            }
+
         }
     }
     
@@ -1109,7 +1156,7 @@ class ChatGroupViewController: GlobalViewController,UITableViewDataSource,UITabl
                 imag.sourceType = UIImagePickerControllerSourceType.Camera;
                 imag.allowsEditing = false
                 
-                self.presentViewController(imag, animated: true, completion: nil)
+            self.presentViewController(imag, animated: true, completion: nil)
             }
             break
         case 2:

@@ -5,6 +5,9 @@
  Created by hodaya ohana on 10/14/15.
  Copyright (c) 2015 webit. All rights reserved.
  */
+"apply" = "בחר";
+"no friend" = "אין לך חברים בקבוצה";
+"Coming soon" = "יהיה בקרוב...";
 "You are here" = "את/ה נמצא כאן";
 "More about" = "עוד על";
 "Display from yesterday" = "הצג מאתמול";
@@ -85,6 +88,7 @@
 "Please enter data" = "יש להזין נתונים";
 "Please select a country" = "יש לבחור מדינה";
 "By signing up with shanty I agree to all the terms and conditions of the people, groups and their personal details, and privacy policy as specified in the Company's articles." = " בהרשמה לשאנטי אני מסכים לכל התנאים וההגבלות של האנשים, הקבוצות ופרטיהם האישיים, ומדיניות הפרטיות כפי שמפורט בתקנון החברה.";
+"By signing up with shanty I agree to all" = "בהרשמה לשאנטי אני מסכים לכל";
 "the terms and conditions" = "התנאים וההגבלות";
 "of the people, groups and their personal details," = "של האנשים, הקבוצות ופרטיהם האישיים,";
 "and privacy policy" = "ומדיניות הפרטיות";
@@ -158,7 +162,7 @@
 "Personal Profile" = "פרופיל אישי";
 "Spoken languages" = "דובר שפות";
 "Supplemental details" = "פרטים משלימים";
-"More about yourself" = "עוד על עצמך";
+"More about yourself" = "...עוד על עצמך";
 "An error occurred; data was not saved" = "ארעה שגיאה, הנתונים לא נשמרו";
 "Data was saved" = "הנתונים נשמרו";
 "Problem in loading controls" = "בעיה בטעינת הפקדים";
@@ -217,6 +221,7 @@
 "Enter to see it" = "הכנס כדי לראות אותה";
 "Boy" = "בן";
 "Girl" = "בת";
+"Error signup chat" = "ארעה שגיאה ברישומך לצאט";
 "Would you like to be approved for joining?" = "האם ברצונך לעבור אישור הצטרפות?";
 "writes you a message" = "כותב לך הודעה";
 "Would you like to go to the message screen?" = "האם ברצונך לעבור למסך ההודעות?";
@@ -249,6 +254,7 @@
 "Please fill the mobile field nine digits!,Without prefix" = "אנא מלא את שדה הנייד בעשר ספרות בלבד!,ללא קידומת";
 "Please select the mobile field without the prefix 0" = "0 אנא מלא את שדה הנייד  ללא קידומת !";
 "Please select the mandatory fields: Email, Username, and Password, portable prefix" = "אנא מלא את שדות החובה: מייל, שם משתמש, סיסמה, נייד וקידומת";
+"Please fill the first name and last name field" = "אנא מלא את שדות שם פרטי ושם משפחה";
 "Filter"="סנן";
 "Sorting by Name"="חיפוש לפי שם";
 "Sorting by Distance"="חיפוש לפי מרחק";
@@ -267,11 +273,6 @@
 "Adding" = "הוספת";
 "Image group:" = "תמונה לקבוצה:";
 "The" = "ה";
-"Apply" = "בחר";
 "Shanti Name" = "שם שאנטי";
 "A temporary problem fetching data from the server, please try later"  = "בעיה זמנית בשליפת נתונים מהשרת,אנא נסו מאוחר יותר";
-"You have no friends group" = "אין לך חברים בקבוצה";
 ;"הפרופיל עודכן" = "The profile has been updated"
-"You tried three times to enter the apps you have to wait 15 minutes" = "ניסית להכנס שלוש פעמים לאפלקציה עליך לחכות 15 דקות";
-"Terms and Conditions" = "תנאים והגבלות";
-"Privacy Policy" = "מדניות פרטיות";

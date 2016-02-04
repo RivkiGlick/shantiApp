@@ -128,6 +128,10 @@
     [self.lblUserInfo setFrame:CGRectMake(self.view.bounds.size.width - self.lblUserInfo.frame.size.width - space, self.lblUserName.frame.origin.y + self.lblUserName.frame.size.height + 10, self.lblUserInfo.frame.size.width, self.lblUserInfo.frame.size.height)];
     
     _rearTableView.frame = CGRectMake(0, self.lblUserInfo.frame.origin.y + self.lblUserInfo.frame.size.height + 10, self.view.bounds.size.width, filter.count * ROW_HEIGHT_TABLE);
+//if(_rearTableView.frame.size.height + _rearTableView.frame.origin.y > self.view.frame.size.height)
+//    {
+//  _rearTableView.frame = CGRectMake(0, self.lblUserInfo.frame.origin.y + self.lblUserInfo.frame.size.height + 10, self.view.bounds.size.width, self.view.frame.size.height - _rearTableView.frame.origin.y);
+//    }
 }
 
 - (void) setSubviewsGraphics{
@@ -150,6 +154,11 @@
 - (void)reloadData
 {
     _rearTableView.frame = CGRectMake(0, self.lblUserInfo.frame.origin.y + self.lblUserInfo.frame.size.height + 10, self.view.bounds.size.width, filter.count * ROW_HEIGHT_TABLE);
+    if(_rearTableView.frame.size.height + _rearTableView.frame.origin.y > self.view.frame.size.height)
+    {
+        _rearTableView.frame = CGRectMake(0, self.lblUserInfo.frame.origin.y + self.lblUserInfo.frame.size.height + 10, self.view.bounds.size.width, self.view.frame.size.height - _rearTableView.frame.origin.y);
+    }
+
     [_rearTableView reloadData];
 }
 
@@ -349,30 +358,27 @@
 }
 
 -(void)logOut:(UINavigationController*)frontNavigationController AndToogleBy:(SWRevealViewController*)revealController{
+    NSString* loginWay = [[NSUserDefaults standardUserDefaults] stringForKey:@"loginWay"];
     [revealController revealToggleAnimated:YES];
     [generic showNativeActivityIndicator:[self revealViewController].frontViewController];
     
     ChooseLoginWayViewController* chooseLoginWayViewController = [[ChooseLoginWayViewController alloc]init];
-    AppDelegate* appDelegate;
-    appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    NSString* loginWay = [[NSUserDefaults standardUserDefaults] stringForKey:@"loginWay"];
+    
     if ([loginWay  isEqual: @"google+"]) {
-        
-           [[GPPSignIn sharedInstance]signOut];
-        
-//        [chooseLoginWayViewController.googleSignIn signOut];
-//        appDelegate.isGoogle = false;
+        [chooseLoginWayViewController.googleSignIn signOut];
+         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"loginWay"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
-//   NSString* loginWay = [[NSUserDefaults standardUserDefaults] stringForKey:@"loginWay"];
+   
     
     if ([loginWay  isEqual: @"faceBook"])
 //    if (appDelegate.isFaceBook)
     {
-//                GPPSignIn.sharedInstance().signOut();
-     
         FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
         [login logOut];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"loginWay"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
     if([[QBChat instance] isLoggedIn]){
@@ -380,8 +386,6 @@
     }
     [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"userName"];
     [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"password"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"loginWay"];
-       [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"id"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];

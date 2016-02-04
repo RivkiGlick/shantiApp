@@ -20,7 +20,19 @@ protocol MainInfoViewDelegate{
 
 class MainInfoViewController: UIViewController {
     
+    @IBOutlet weak var viewP: UIView!
+    @IBOutlet weak var lblIndicatorLS: UILabel!
+    @IBOutlet weak var imgIndicatorLS: UIImageView!
+    @IBOutlet weak var lblAboutLS: UILabel!
+    @IBOutlet weak var btnMoreInfoLS: UIButton!
+    @IBOutlet weak var lblSubtitleLS: UILabel!
+    @IBOutlet weak var lblTitleLS: UILabel!
+    @IBOutlet weak var btnMeetingPointLS: UIButton!
+    @IBOutlet weak var lblTimeLS: UILabel!
+    @IBOutlet weak var btnChatLS: UIButton!
+    @IBOutlet weak var viewLS: UIView!
     @IBOutlet weak var btnChat: UIButton!
+    @IBOutlet weak var lblNoteLS: UILabel!
     @IBOutlet weak var btnMoreInfo: UIButton!
     @IBOutlet weak var btnMeetingPoint: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
@@ -31,6 +43,7 @@ class MainInfoViewController: UIViewController {
     @IBOutlet weak var imgIndicator: UIImageView!
     @IBOutlet weak var lblIndicator: UILabel!
     var textAlignment: NSTextAlignment = .Left
+    var mainPage:MainPage = MainPage()
     
     var delegate: MainInfoViewDelegate?
     
@@ -55,9 +68,42 @@ class MainInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        mainPage.userInfoView = self
+        mainPage.userInfoViewLS = self
+
         
-        // Do any additional setup after loading the view.
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
     }
+    
+    
+    override func viewWillLayoutSubviews(){
+        //self.addSubviewsSettings()
+        
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        
+    }
+
+    
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+//            viewP.hidden = true
+//            viewLS.hidden = true
+            //viewLS.frame = CGRectMake(0, 0, 330, 240)
+            
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+//            viewP.hidden = false
+//            viewLS.hidden = true
+//            
+        }
+        
+    }
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -95,14 +141,23 @@ class MainInfoViewController: UIViewController {
         self.lblAbout.hidden = true
         self.lblTime.hidden = true
         
+        self.lblAboutLS.textAlignment = textAlignment
+        
+        self.lblAboutLS.hidden = true
+        self.lblTimeLS.hidden = true
+        
         if self.user!.oUserQuickBlox.ID == -1{
             btnChat.hidden = true
+            btnChatLS.hidden = true
         }else
         {
             btnChat.hidden = false
+            btnChatLS.hidden = false
+
         }
         
         self.lblSubtitle.text = user!.nvShantiName
+        self.lblSubtitleLS.text = user!.nvShantiName
         if self.user! == ActiveUser.sharedInstace
         {
             self.btnMoreInfo.hidden = true
@@ -117,9 +172,31 @@ class MainInfoViewController: UIViewController {
             res.endEditing()
             self.lblNote.attributedText = res
             
+            self.btnMoreInfo.hidden = true
+            
+            self.lblTitle.text = NSLocalizedString("You are here", comment: "") as String /*"אתה נמצא כאן"*/
+            self.lblTitle.textColor = UIColor(red: 124/255, green: 7/255, blue: 157/255, alpha: 1)
+            
+            self.lblNoteLS.text = ""
+//            var res = NSMutableAttributedString(attributedString: self.lblNoteLS.attributedText)
+            res.beginEditing()
+            res.removeAttribute(NSFontAttributeName, range: NSRangeFromString("\(self.lblNoteLS.attributedText)"))
+            res.endEditing()
+            self.lblNoteLS.attributedText = res
+            
+            self.btnMoreInfoLS.hidden = true
+            
+            self.lblTitleLS.text = NSLocalizedString("You are here", comment: "") as String /*"אתה נמצא כאן"*/
+            self.lblTitleLS.textColor = UIColor(red: 124/255, green: 7/255, blue: 157/255, alpha: 1)
+
+            
+            
+            
 //            if self.user!.bIsMainUser == true
 //            {
                 self.btnMeetingPoint.hidden = false
+                self.btnMeetingPointLS.hidden = false
+
 //            }else
 //            {
 //                self.btnMeetingPoint.hidden = true
@@ -133,10 +210,20 @@ class MainInfoViewController: UIViewController {
             self.lblTitle.textColor = UIColor.greenHome()
             self.lblTitle.text = user!.oAddress.nvFullAddress
             
+            self.btnMoreInfoLS.hidden = false
+            self.btnMeetingPointLS.hidden = false
+            
+            self.lblTitleLS.textColor = UIColor.greenHome()
+            self.lblTitleLS.text = user!.oAddress.nvFullAddress
+            
             var a = NSLocalizedString("More about", comment: "") as String//עוד על
             self.btnMoreInfo.setTitle("\(a) \(user!.nvShantiName)", forState: UIControlState.Normal)
             self.btnMoreInfo.setTitle("\(a) \(user!.nvShantiName)", forState: UIControlState.Highlighted)
             self.btnMoreInfo.addTarget(self, action: "moreAboutUser:", forControlEvents: UIControlEvents.TouchUpInside)
+            
+            self.btnMoreInfoLS.setTitle("\(a) \(user!.nvShantiName)", forState: UIControlState.Normal)
+            self.btnMoreInfoLS.setTitle("\(a) \(user!.nvShantiName)", forState: UIControlState.Highlighted)
+            self.btnMoreInfoLS.addTarget(self, action: "moreAboutUser:", forControlEvents: UIControlEvents.TouchUpInside)
         }
         self.btnMeetingPoint.setTitle("", forState: UIControlState.Normal)
         self.btnMeetingPoint.setTitle("", forState: UIControlState.Highlighted)
@@ -146,16 +233,34 @@ class MainInfoViewController: UIViewController {
         self.btnChat.setTitle("", forState: UIControlState.Highlighted)
         self.btnChat.addTarget(self, action: "startChat:", forControlEvents: UIControlEvents.TouchUpInside)
         
+        self.btnMeetingPointLS.setTitle("", forState: UIControlState.Normal)
+        self.btnMeetingPointLS.setTitle("", forState: UIControlState.Highlighted)
+        self.btnMeetingPointLS.addTarget(self, action: "createMeetingPoint:", forControlEvents: UIControlEvents.TouchUpInside)
+        
+        self.btnChatLS.setTitle("", forState: UIControlState.Normal)
+        self.btnChatLS.setTitle("", forState: UIControlState.Highlighted)
+        self.btnChatLS.addTarget(self, action: "startChat:", forControlEvents: UIControlEvents.TouchUpInside)
+
+        
         if self.user!  == ActiveUser.sharedInstace
         {
             self.btnChat.setBackgroundImage(UIImage(named: "chat_btn_me"), forState: UIControlState.Normal)
             self.btnChat.setBackgroundImage(UIImage(named: "chat_btn_me_clicked"), forState: UIControlState.Highlighted)
+            
+            self.btnChatLS.setBackgroundImage(UIImage(named: "chat_btn_me"), forState: UIControlState.Normal)
+            self.btnChatLS.setBackgroundImage(UIImage(named: "chat_btn_me_clicked"), forState: UIControlState.Highlighted)
             
             self.btnMeetingPoint.setBackgroundImage(UIImage(named: "meeting_point_btn"), forState: UIControlState.Normal)
             self.btnMeetingPoint.setBackgroundImage(UIImage(named: "meeting_point_btn_clicked"), forState: UIControlState.Normal)
             self.imgIndicator.hidden = true
             self.lblIndicator.hidden = true
             self.lblNote.hidden = false
+            
+            self.btnMeetingPointLS.setBackgroundImage(UIImage(named: "meeting_point_btn"), forState: UIControlState.Normal)
+            self.btnMeetingPointLS.setBackgroundImage(UIImage(named: "meeting_point_btn_clicked"), forState: UIControlState.Normal)
+            self.imgIndicatorLS.hidden = true
+            self.lblIndicatorLS.hidden = true
+            self.lblNoteLS.hidden = false
         }
         else
         {
@@ -166,18 +271,31 @@ class MainInfoViewController: UIViewController {
         
             self.btnMeetingPoint.setBackgroundImage(UIImage(named: "nevigation_btn"), forState: UIControlState.Normal)
             self.btnMeetingPoint.setBackgroundImage(UIImage(named: "nevigation_btn_clicked"), forState: UIControlState.Normal)
+            
+            self.btnChatLS.setBackgroundImage(UIImage(named: "chat_btn.png"), forState: UIControlState.Normal)
+            self.btnChatLS.setBackgroundImage(UIImage(named: "chat_btn_clicked.png"), forState: UIControlState.Highlighted)
+            
+            self.btnMeetingPointLS.setBackgroundImage(UIImage(named: "nevigation_btn"), forState: UIControlState.Normal)
+            self.btnMeetingPointLS.setBackgroundImage(UIImage(named: "nevigation_btn_clicked"), forState: UIControlState.Normal)
             if self.user?.waintingMessages > 0
             {
                 self.imgIndicator.hidden = false
                 self.lblIndicator.hidden = false
+                
+                self.imgIndicatorLS.hidden = false
+                self.lblIndicatorLS.hidden = false
             }
             else
             {
                 self.imgIndicator.hidden = true
                 self.lblIndicator.hidden = true
+                
+                self.imgIndicatorLS.hidden = true
+                self.lblIndicatorLS.hidden = true
             }
             
             self.lblNote.hidden = true
+            self.lblNoteLS.hidden = true
         }
         
         //        self.lblIndicator.font = UIFont(name: "spacer", size: 14)
@@ -185,6 +303,12 @@ class MainInfoViewController: UIViewController {
         self.lblIndicator.textColor = UIColor.whiteColor()
         self.lblIndicator.backgroundColor = UIColor.clearColor()
         self.lblIndicator.sizeToFit()
+        
+        self.lblIndicatorLS.text = "\(ActiveUser.sharedInstace.waintingMessages)"
+        self.lblIndicatorLS.textColor = UIColor.whiteColor()
+        self.lblIndicatorLS.backgroundColor = UIColor.clearColor()
+        self.lblIndicatorLS.sizeToFit()
+
     }
     
     func setFramesByUser(){
@@ -252,14 +376,26 @@ class MainInfoViewController: UIViewController {
                 self.lblIndicator.sizeToFit()
                 self.lblIndicator.hidden = false
                 self.imgIndicator.hidden = false
+                
+                self.lblIndicatorLS.text = "\(count)"
+                self.lblIndicatorLS.sizeToFit()
+                self.lblIndicatorLS.hidden = false
+                self.imgIndicatorLS.hidden = false
                 self.CalculateLblIndicatoreFrame()
             }else{
                 self.lblIndicator.hidden = true
                 self.imgIndicator.hidden = true
+                
+                self.lblIndicatorLS.hidden = true
+                self.imgIndicatorLS.hidden = true
             }
         }else{
             self.lblIndicator.hidden = true
             self.imgIndicator.hidden = true
+            
+            self.lblIndicatorLS.hidden = true
+            self.imgIndicatorLS.hidden = true
+
         }
         
     }
@@ -282,25 +418,56 @@ class MainInfoViewController: UIViewController {
         default:
             break
         }
+        
+        switch lbl{
+        case self.lblNoteLS:
+            self.lblNoteLS.text = ""
+            self.lblNoteLS.text = text
+            //            self.lblNote.sizeToFit()
+            self.lblNoteLS.textAlignment = textAlignment
+            
+            if self.user == ActiveUser.sharedInstace{
+                
+            }else{
+                
+            }
+            break
+        default:
+            break
+        }
+
     }
     
     func configByMeetingPoint(){
         
         if  self.meetingPoint?.iGroupId == -1{
             btnChat.hidden = true
+            btnChatLS.hidden = true
         }else
         {
             btnChat.hidden = false
+            btnChatLS.hidden = false
+
         }
         
         self.lblTitle.text = NSLocalizedString("Meeting of group", comment: "") as String/* "מפגש קבוצת"*/
         self.lblTitle.textColor = UIColor.greenHome()
         
         self.lblTime.hidden = false
+        
+        self.lblTitleLS.text = NSLocalizedString("Meeting of group", comment: "") as String/* "מפגש קבוצת"*/
+        self.lblTitleLS.textColor = UIColor.greenHome()
+        
+        self.lblTimeLS.hidden = false
+
         var meetingHour = self.meetingPoint!.dtMeetingTime.substringWithRange(Range<String.Index>(start: advance(self.meetingPoint!.dtMeetingTime.endIndex, -8), end: advance(self.meetingPoint!.dtMeetingTime.endIndex,0)))
         meetingHour = meetingHour.substringWithRange(Range<String.Index>(start: advance(meetingHour.startIndex, 0), end: advance(meetingHour.endIndex,-3)))
         self.lblTime.text = meetingHour
         self.lblTime.textColor = UIColor.greenHome()
+        
+        self.lblTimeLS.text = meetingHour
+        self.lblTimeLS.textColor = UIColor.greenHome()
+
         
         var diffWord1 = NSLocalizedString("Definition", comment: "") as String/*"הגדרה: "*/
         var text1 = NSMutableAttributedString(string: "\(diffWord1)\(self.meetingPoint!.nvTitle)")
@@ -309,6 +476,11 @@ class MainInfoViewController: UIViewController {
         self.lblSubtitle.attributedText = text1
         self.lblSubtitle.numberOfLines = 0
         self.lblSubtitle.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        
+        self.lblSubtitleLS.attributedText = text1
+        self.lblSubtitleLS.numberOfLines = 0
+        self.lblSubtitleLS.lineBreakMode = NSLineBreakMode.ByWordWrapping
+
 
         
         var diffWord2 = NSLocalizedString("Notes", comment: "") as String /*"הערות: "*/
@@ -319,6 +491,12 @@ class MainInfoViewController: UIViewController {
         self.lblNote.hidden = false
         self.lblNote.numberOfLines = 0
         self.lblNote.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        
+        self.lblNoteLS.attributedText = text2
+        self.lblNoteLS.hidden = false
+        self.lblNoteLS.numberOfLines = 0
+        self.lblNoteLS.lineBreakMode = NSLineBreakMode.ByWordWrapping
+
         
         var arrivalTime = String()
         var diffWord3 = NSLocalizedString("ETA from your location:", comment: "") as String/* "זמן הגעה ממיקומך: "*/
@@ -343,11 +521,21 @@ class MainInfoViewController: UIViewController {
                 self.lblAbout.numberOfLines = 0
                 self.lblAbout.lineBreakMode = NSLineBreakMode.ByWordWrapping
                 self.lblAbout.hidden = false
+                
+                self.lblAboutLS.attributedText = text3
+                self.lblAboutLS.numberOfLines = 0
+                self.lblAboutLS.lineBreakMode = NSLineBreakMode.ByWordWrapping
+                self.lblAboutLS.hidden = false
             }else{
                 self.lblAbout.attributedText = text3
                 self.lblAbout.numberOfLines = 0
                 self.lblAbout.lineBreakMode = NSLineBreakMode.ByWordWrapping
                 self.lblAbout.hidden = false
+                
+                self.lblAboutLS.attributedText = text3
+                self.lblAboutLS.numberOfLines = 0
+                self.lblAboutLS.lineBreakMode = NSLineBreakMode.ByWordWrapping
+                self.lblAboutLS.hidden = false
             }
             self.setFramesByMeetingPoint()
         })
@@ -357,6 +545,12 @@ class MainInfoViewController: UIViewController {
         self.lblAbout.lineBreakMode = NSLineBreakMode.ByWordWrapping
         self.lblAbout.hidden = false
         
+        self.lblAboutLS.attributedText = text3
+        self.lblAboutLS.numberOfLines = 0
+        self.lblAboutLS.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        self.lblAboutLS.hidden = false
+
+        
         self.btnChat.setBackgroundImage(UIImage(named: "chat_btn.png"), forState: UIControlState.Normal)
         self.btnChat.setBackgroundImage(UIImage(named: "chat_btn_clicked.png"), forState: UIControlState.Highlighted)
     
@@ -364,6 +558,14 @@ class MainInfoViewController: UIViewController {
         self.btnMeetingPoint.setBackgroundImage(UIImage(named: "nevigation_btn"), forState: UIControlState.Normal)
         self.btnMeetingPoint.setBackgroundImage(UIImage(named: "nevigation_btn_clicked"), forState: UIControlState.Highlighted)
         self.btnMoreInfo.hidden = true
+        
+        self.btnChatLS.setBackgroundImage(UIImage(named: "chat_btn.png"), forState: UIControlState.Normal)
+        self.btnChatLS.setBackgroundImage(UIImage(named: "chat_btn_clicked.png"), forState: UIControlState.Highlighted)
+        
+        //        self.btnMeetingPointLS.addTarget(MainPage(), action: "navigateToMeetingPoint:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.btnMeetingPointLS.setBackgroundImage(UIImage(named: "nevigation_btn"), forState: UIControlState.Normal)
+        self.btnMeetingPointLS.setBackgroundImage(UIImage(named: "nevigation_btn_clicked"), forState: UIControlState.Highlighted)
+        self.btnMoreInfoLS.hidden = true
     }
     
     func setFramesByMeetingPoint(){

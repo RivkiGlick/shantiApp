@@ -10,7 +10,7 @@ import UIKit
 
 class PrivacyPolicyViewController: GlobalViewController {
 
-    @IBOutlet weak var webViewPrivacyPolicy: UIWebView!
+        @IBOutlet weak var webViewPrivacyPolicy: UIWebView!
     override func viewDidLoad() {
         super.viewDidLoad()
         

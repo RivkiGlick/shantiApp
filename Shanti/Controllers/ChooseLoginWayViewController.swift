@@ -16,6 +16,16 @@ import CoreMotion
 class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GPPSignInDelegate
 {
     
+    
+    @IBOutlet weak var imgLogoLanscape: UIImageView!
+    @IBOutlet weak var viewLandscape: UIView!
+    
+    @IBOutlet weak var lblVersionLS: UILabel!
+    @IBOutlet weak var btnSignupLS: UIButton!
+    @IBOutlet weak var btnGoogleLS: UIButton!
+    @IBOutlet weak var lblTitleLS: UILabel!
+    @IBOutlet weak var btnLoginLS: UIButton!
+    @IBOutlet weak var btnFacebookLS: UIButton!
     @IBOutlet weak var btnFacebook: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var btnLogin: UIButton!
@@ -32,9 +42,15 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
     var phone:String = ""
     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var userRegister : User = User()
+    var check = Bool()
+    
+    override func viewWillLayoutSubviews() {
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.navigationController!.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: UIBarMetrics.Default)
         self.navigationController?.navigationBarHidden = true
         self.addPageGraphics()
@@ -56,9 +72,62 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
         googleSignIn.shouldFetchGoogleUserID = true
         googleSignIn.scopes = [kGTLAuthScopePlusLogin]
         googleSignIn.delegate = self
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            check = true
+            self.view.bringSubviewToFront(viewLandscape)
+            
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            if check
+            {
+                self.view.sendSubviewToBack(viewLandscape)
+            }
+        }
+
         
         
     }
+    override func viewWillAppear(animated: Bool) {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            check = true
+            self.view.bringSubviewToFront(viewLandscape)
+            
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            if check
+            {
+                self.view.sendSubviewToBack(viewLandscape)
+            }
+        }
+
+    }
+    
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            check = true
+            self.view.bringSubviewToFront(viewLandscape)
+            
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+           if check
+           {
+            self.view.sendSubviewToBack(viewLandscape)
+           }
+        }
+        
+    }
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -74,12 +143,17 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
         var localizedLogin = NSLocalizedString("Login", comment: "")
         var localizedSigningUp = NSLocalizedString("Signing up", comment: "")
         lblTitle.text = localizedLoginOption as String
+        lblTitleLS.text = localizedLoginOption as String
         
         btnLogin.setTitle(localizedLogin as String, forState: UIControlState.Normal)
         btnLogin.setTitle(localizedLogin as String, forState: UIControlState.Highlighted)
+        btnLoginLS.setTitle(localizedLogin as String, forState: UIControlState.Normal)
+        btnLoginLS.setTitle(localizedLogin as String, forState: UIControlState.Highlighted)
         
         btnSignup.setTitle(localizedSigningUp as String, forState: UIControlState.Normal)
         btnSignup.setTitle(localizedSigningUp as String, forState: UIControlState.Highlighted)
+        btnSignupLS.setTitle(localizedSigningUp as String, forState: UIControlState.Normal)
+        btnSignupLS.setTitle(localizedSigningUp as String, forState: UIControlState.Highlighted)
         
     }
     
@@ -89,34 +163,54 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
         self.setText()
         
         lblTitle.textColor = UIColor(red: 191.0/255.0, green: 196.0/255.0, blue: 201.0/255.0, alpha: 1)
+        lblTitleLS.textColor = UIColor(red: 191.0/255.0, green: 196.0/255.0, blue: 201.0/255.0, alpha: 1)
         lblVersion.text = NSBundle.mainBundle().objectForInfoDictionaryKey(kCFBundleVersionKey as String) as? String
+        lblVersionLS.text = NSBundle.mainBundle().objectForInfoDictionaryKey(kCFBundleVersionKey as String) as? String
         
         
         //Radius
         btnLogin.layer.cornerRadius = 3.0
+        btnLoginLS.layer.cornerRadius = 3.0
         btnSignup.layer.cornerRadius = 3.0
+        btnSignupLS.layer.cornerRadius = 3.0
         btnFacebook.layer.cornerRadius = 3.0
+        btnFacebookLS.layer.cornerRadius = 3.0
         btnGoogle.layer.cornerRadius = 3.0
+        btnGoogleLS.layer.cornerRadius = 3.0
         
         //Border
         btnLogin.layer.borderWidth = 1.0
         btnLogin.layer.borderColor = UIColor.purpleMedium().CGColor
+        btnLoginLS.layer.borderWidth = 1.0
+        btnLoginLS.layer.borderColor = UIColor.purpleMedium().CGColor
         btnSignup.layer.borderWidth = 1.0
         btnSignup.layer.borderColor = UIColor.purpleMedium().CGColor
+        btnSignupLS.layer.borderWidth = 1.0
+        btnSignupLS.layer.borderColor = UIColor.purpleMedium().CGColor
         
         //Shadows settings
         btnFacebook.layer.shadowRadius = 1.0
         btnFacebook.layer.shadowOffset = CGSizeMake(0, -1.0)
         btnFacebook.layer.shadowColor = UIColor(red: 30/255.0, green: 10/255.0, blue: 40/255.0, alpha: 0.75).CGColor
+        btnFacebookLS.layer.shadowRadius = 1.0
+        btnFacebookLS.layer.shadowOffset = CGSizeMake(0, -1.0)
+        btnFacebookLS.layer.shadowColor = UIColor(red: 30/255.0, green: 10/255.0, blue: 40/255.0, alpha: 0.75).CGColor
         
         btnGoogle.layer.shadowRadius = 1.0
         btnGoogle.layer.shadowOffset = CGSizeMake(0, -1.0)
         btnGoogle.layer.shadowColor = UIColor(red: 30/255.0, green: 10/255.0, blue: 40/255.0, alpha: 0.75).CGColor
+        btnGoogleLS.layer.shadowRadius = 1.0
+        btnGoogleLS.layer.shadowOffset = CGSizeMake(0, -1.0)
+        btnGoogleLS.layer.shadowColor = UIColor(red: 30/255.0, green: 10/255.0, blue: 40/255.0, alpha: 0.75).CGColor
         
         btnLogin.addTarget(self, action: "BtnsBorderColorOnRelease:", forControlEvents: UIControlEvents.TouchDown)
         btnLogin.addTarget(self, action: "BtnsBorderColorOnTouchUpInside:", forControlEvents: UIControlEvents.TouchUpInside)
+        btnLoginLS.addTarget(self, action: "BtnsBorderColorOnRelease:", forControlEvents: UIControlEvents.TouchDown)
+        btnLoginLS.addTarget(self, action: "BtnsBorderColorOnTouchUpInside:", forControlEvents: UIControlEvents.TouchUpInside)
         btnSignup.addTarget(self, action: "BtnsBorderColorOnRelease:", forControlEvents: UIControlEvents.TouchDown)
         btnSignup.addTarget(self, action: "BtnsBorderColorOnTouchUpInside:", forControlEvents: UIControlEvents.TouchUpInside)
+        btnSignupLS.addTarget(self, action: "BtnsBorderColorOnRelease:", forControlEvents: UIControlEvents.TouchDown)
+        btnSignupLS.addTarget(self, action: "BtnsBorderColorOnTouchUpInside:", forControlEvents: UIControlEvents.TouchUpInside)
         
         //Frames
         let bigBtnsWidth = CGFloat(291.5)
@@ -168,6 +262,10 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
                 }
             }
         })
+        
+        
+        //
+        //        self.returnUserData()
     }
     
     func getFBUserData(){
@@ -187,7 +285,8 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
         if ((error) == nil)
         {
             print("User complete")
-            appDelegate.isFaceBook = true
+            NSUserDefaults.standardUserDefaults().setObject("faceBook", forKey: "loginWay")
+            NSUserDefaults.standardUserDefaults().synchronize()
             //            self.returnUserData()
         }
     }
@@ -215,7 +314,7 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
         NSUserDefaults.standardUserDefaults().setObject(ActiveUser.sharedInstace.nvFacebookUserId, forKey: "id")
         NSUserDefaults.standardUserDefaults().setObject("faceBook", forKey: "loginWay")
         NSUserDefaults.standardUserDefaults().synchronize()
-        Connection.connectionToService("LoginFacebook", params: ["id":ActiveUser.sharedInstace.nvFacebookUserId], completion: {data -> Void in
+        Connection.connectionToService("LoginFacebook", params: ["id":ActiveUser.sharedInstace.nvFacebookUserId,"DeviceId":455], completion: {data -> Void in
             var strData = NSString(data: data, encoding: NSUTF8StringEncoding)
             println("Login:\(strData)")
             var err: NSError?
@@ -224,7 +323,8 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
             ActiveUser.sharedInstace.nvFacebookUserId = ActiveUser.sharedInstace.nvFacebookUserId
             if let parseJSON = json {
                 ActiveUser.setUser(User.parseUserJson(JSON(parseJSON)))
-                ActiveUser.sharedInstace.oLocation.iDriverId = ActiveUser.sharedInstace.iUserId
+                ActiveUser.sharedInstace.oLocation.iDriverId =
+                    ActiveUser.sharedInstace.iUserId
                 ActiveUser.sharedInstace.nvLastName = self.lastName
                 ActiveUser.sharedInstace.nvFirstName = self.name
                 ActiveUser.sharedInstace.nvEmail = self.mail
@@ -294,7 +394,7 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
     
     // GooglePlush Delegate Methods
     
-    func finishedWithAuth(auth: GTMOAuth2Authentication!, error: NSError!) {
+func finishedWithAuth(auth: GTMOAuth2Authentication!, error: NSError!) {
         
         //        self.appDelegate.isGoogle = true
         print("received auth \(auth), error \(error)")
@@ -318,7 +418,7 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
         NSUserDefaults.standardUserDefaults().setObject("google+", forKey: "loginWay")
         NSUserDefaults.standardUserDefaults().setObject(GPPSignIn.sharedInstance().userID, forKey: "id")
         NSUserDefaults.standardUserDefaults().synchronize()
-        Connection.connectionToService("LoginGoogle", params: ["id":GPPSignIn.sharedInstance().userID], completion: {data -> Void in
+        Connection.connectionToService("LoginGoogle", params: ["id":GPPSignIn.sharedInstance().userID,"DeviceId":455], completion: {data -> Void in
             var strData = NSString(data: data, encoding: NSUTF8StringEncoding)
             println("Login:\(strData)")
             var err: NSError?
@@ -350,7 +450,7 @@ class ChooseLoginWayViewController: UIViewController,FBSDKLoginButtonDelegate,GP
                         }
                         else
                         {
-                            if strData!.integerValue == 4
+                            if strData!.integerValue == 4 || strData!.integerValue == 3
                             {
                                 Connection.connectionToService("updateGoogleId", params: ["nvUserName":self.mail,"nvGoogleId":GPPSignIn.sharedInstance().userID], completion: {
                                     data -> Void in

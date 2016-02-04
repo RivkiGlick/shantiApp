@@ -59,6 +59,10 @@ private let ApplicationDataInstance = ApplicationData()
             regId=2
             
         }
+        //NSLocaleLanguageCode value:langID];
+        
+        //        let langId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
+        //        let countryId = NSLocale.currentLocale().objectForKey(NSLocaleCountryCode) as! String
         let language = "\(preferredLanguage)\(reg)"
         var nvLanguage:String = language
         
@@ -78,6 +82,8 @@ private let ApplicationDataInstance = ApplicationData()
                     
                 }
             })
+            
+            //            Connection.connectionToService("GetCodeTable", params: ["TableId":LANGUAGE_ID,"nvLanguage":nvLanguage], completion: {
             Connection.connectionToService("GetLanguagesCodeTable", params: ["nvLanguage":preferredLanguage], completion: {
                 data -> Void in
                 
@@ -90,6 +96,8 @@ private let ApplicationDataInstance = ApplicationData()
                     for dict in json!{
                         
                         self.languageArry.addObject(KeyValue.parsKeyValueDict(JSON(dict)) as KeyValue)
+                        
+                        /*(CodeValue.parsCodeValueJson(JSON(dict)) as CodeValue)*/
                         
                         
                     }
@@ -177,8 +185,8 @@ private let ApplicationDataInstance = ApplicationData()
                 var json = NSJSONSerialization.JSONObjectWithData(data, options: .MutableLeaves, error: &err) as? NSArray;
                 
                 if (json != nil) {
-                    for dict in json!
-                    {
+                    for dict in json!{
+                        //                            self.groupsArry.addObject(CodeValue.parsCodeValueJson(JSON(dict)) as CodeValue)
                         self.groupsArry.append(CodeValue.parsCodeValueJson(JSON(dict)))
                     }
                 }

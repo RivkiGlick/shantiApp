@@ -27,7 +27,8 @@ class FillingDetailsViewController: GlobalViewController,UITextViewDelegate {
         self.setSubviewsGraphics()
         self.setSubviewsFrames()
         self.txtMoreDetails.delegate = self
-        self.txtMoreDetails.selectedTextRange  = txtMoreDetails.textRangeFromPosition(txtMoreDetails.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
+        self.txtMoreDetails.textColor = UIColor.lightGrayColor()
+//        self.txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(txtMoreDetails.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
         
         
         
@@ -42,7 +43,7 @@ class FillingDetailsViewController: GlobalViewController,UITextViewDelegate {
         self.txtHobby.resignFirstResponder()
         self.txtMoreDetails.resignFirstResponder()
         
-        self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)
+        self.view.frame = CGRectMake(0,0, self.view.frame.size.width, self.view.frame.size.height)
         UIView.commitAnimations()
     }
     
@@ -109,7 +110,7 @@ class FillingDetailsViewController: GlobalViewController,UITextViewDelegate {
         txtHobby.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
         
         txtMoreDetails.text = NSLocalizedString("More details", comment: "")  as String/*"עוד פרטים"*/
-        txtMoreDetails.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
+//        txtMoreDetails.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
         txtMoreDetails.layer.cornerRadius = txtHobby.layer.cornerRadius
         txtMoreDetails.layer.shadowColor = txtHobby.layer.shadowColor
         txtMoreDetails.layer.shadowOffset = txtHobby.layer.shadowOffset
@@ -154,40 +155,63 @@ class FillingDetailsViewController: GlobalViewController,UITextViewDelegate {
     }
     
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-        
-        let currentText:NSString = txtMoreDetails.text
-        let updatedText = currentText.stringByReplacingCharactersInRange(range, withString:text)
-        
-        
-        if updatedText.isEmpty {
-            
-            txtMoreDetails.text = NSLocalizedString("More details", comment: "")  as String
-            txtMoreDetails.textColor = UIColor.lightGrayColor()
-            txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(textView.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
-            
+//    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+//        
+//        let currentText:NSString = txtMoreDetails.text
+//        let updatedText = currentText.stringByReplacingCharactersInRange(range, withString:text)
+//        
+//        
+//        if updatedText.isEmpty {
+//            
+//            txtMoreDetails.text = NSLocalizedString("More details", comment: "")  as String
+//            txtMoreDetails.textColor = UIColor.lightGrayColor()
+//            txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(textView.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
+//            
+//            return false
+//        }
+//            
+//            
+//        else if !text.isEmpty {
+//            txtMoreDetails.text = updatedText
+//            txtMoreDetails.textColor = UIColor.blackColor()
+//        }
+//        
+//        return true
+//    }
+//    
+//    func textViewDidChangeSelection(textView: UITextView) {
+//        
+//        if  txtMoreDetails.text == NSLocalizedString("More details", comment: "")  as String{
+//            txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(txtMoreDetails.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
+//        }
+//        
+//    }
+//    
+    
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool{
+        if text == "\n"{
+            textView.resignFirstResponder()
             return false
         }
-            
-            
-        else if !text.isEmpty {
-            txtMoreDetails.text = ""
-            txtMoreDetails.textColor = UIColor.blackColor()
-        }
-        
         return true
     }
     
-    func textViewDidChangeSelection(textView: UITextView) {
-        
-        if  txtMoreDetails.text == NSLocalizedString("More details", comment: "")  as String{
-            txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(txtMoreDetails.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
+    func textViewDidBeginEditing(textView: UITextView){
+        if textView.text==NSLocalizedString("More details", comment: "") as String  /*"עוד על עצמך..."*/ {
+            textView.text = ""
         }
         
+        
     }
-    
-    
-    
+    func textViewDidEndEditing(textView: UITextView){
+        if textView.text=="" || textView.text == " "{
+            textView.text = NSLocalizedString("More details", comment: "") as String  /*"עוד על עצמך..."*/
+        }
+        
+        
+    }
+
+
     
     @IBAction func saveChangesInServer(sender: AnyObject) {
         self.user.nvHobby = txtHobby.text

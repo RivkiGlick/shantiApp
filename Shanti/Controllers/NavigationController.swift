@@ -12,22 +12,20 @@ class NavigationController: UINavigationController {
     var cameFromNotification: Bool = false
     var userInfo: [NSObject : AnyObject]?
     var generic: Generic?
-    
+    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var frontNavigationController: UINavigationController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         let splash: SplashViewController = self.storyboard!.instantiateViewControllerWithIdentifier("SplashViewControllerId") as! SplashViewController
-        var wind: UIWindow = UIApplication.sharedApplication().windows[0] as! UIWindow
-        wind.rootViewController = splash
-//        self.getNavigationController()
-//        self.login()
+            var wind: UIWindow = UIApplication.sharedApplication().windows[0] as! UIWindow
+            wind.rootViewController = splash
 
-//        let splash: SplashViewController = self.storyboard!.instantiateViewControllerWithIdentifier("SplashViewControllerId") as! SplashViewController
-//        var wind: UIWindow = UIApplication.sharedApplication().windows[0] as! UIWindow
-//        wind.rootViewController = splash
-//        self.login()
+        
+//        self.getNavigationController()
+ //       self.login()
 
 //        if let userDict = NSUserDefaults.standardUserDefaults().valueForKey("user") as? NSDictionary{
 //            if let currUserDict = userDict["newUser"] as? NSDictionary{
@@ -108,6 +106,29 @@ class NavigationController: UINavigationController {
 //        ApplicationData.sharedApplicationDataInstance.getNeededTablesFromServer()
 //        
 //    }
+    
+//    func rotated()
+//    {
+//        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+//        {
+//            print("landscape")
+//            let splash:SplashViewController = self.storyboard!.instantiateViewControllerWithIdentifier("SplashViewControllerIdLS") as! SplashViewController
+//            var wind: UIWindow = UIApplication.sharedApplication().windows[0] as! UIWindow
+//            wind.rootViewController = splash
+//            
+//        }
+//        
+//        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+//        {
+//            print("Portrait")
+//            let splash: SplashViewController = self.storyboard!.instantiateViewControllerWithIdentifier("SplashViewControllerId") as! SplashViewController
+//            var wind: UIWindow = UIApplication.sharedApplication().windows[0] as! UIWindow
+//            wind.rootViewController = splash
+//            
+//        }
+//        
+//    }
+
     func getNavigationController(){
         var rearViewController = RearViewController()
         var rearNavigationController = UINavigationController(rootViewController: rearViewController)
