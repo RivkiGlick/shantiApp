@@ -12,7 +12,13 @@ import UIKit
 
 class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegate,ActiveUserDelegate,MainInfoViewDelegate {
     
+    @IBOutlet weak var viewInViewLS: UIView!
+    @IBOutlet weak var viewLS: UIView!
+    @IBOutlet weak var traingleLS: UIButton!
     @IBOutlet weak var mapView: GMSMapView!
+   
+    @IBOutlet weak var barViewLS: UIView!
+    @IBOutlet weak var mapViewLS: GMSMapView!
     @IBOutlet weak var underLineView: UIView!
     @IBOutlet weak var imgTraingle: UIImageView!
     @IBOutlet weak var lblUnderLine: UILabel!
@@ -22,9 +28,13 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
     @IBOutlet weak var groupsBtn: UIButton!
     
     var userInfoView: MainInfoViewController!
+   var userInfoViewLS: MainInfoViewController!
     var meetingView :MeetingPointViewController!
+    let languageId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
+   // var viewInfoLS = UIView()
     
-    //    var barView: UIView!
+    var back = false
+       //    var barView: UIView!
     let locationManeger = CLLocationManager()
     var usersList: NSMutableDictionary = NSMutableDictionary()
     var usersDict: NSMutableDictionary = NSMutableDictionary()
@@ -40,14 +50,16 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
     var btnMenu: UIBarButtonItem!
     var btnGps: UIBarButtonItem!//UIButton!
     var gpsSettingsBtn = UIButton()
+    var gpsSettingsBtnLS = UIButton()
     let myLocationMarker: ShantiMarker = ShantiMarker(user: ActiveUser.sharedInstace)
+    let myLocationMarkerLS: ShantiMarker = ShantiMarker(user: ActiveUser.sharedInstace)
     var mapViewCameraFlg = true
     var timeInterval: NSTimer!
     
     var flg = true
     var alertTxtField: UITextField = UITextField()
     var gpsOff = false
-    
+    var check = false
     var cameFromNotification: Bool = false
     var userInfo: [NSObject : AnyObject]?
     var notificationInterval: NSTimer!
@@ -60,6 +72,9 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
         meetingView = self.storyboard?.instantiateViewControllerWithIdentifier("MeetingPointViewControllerId") as! MeetingPointViewController
         userInfoView = self.storyboard?.instantiateViewControllerWithIdentifier("MainInfoViewControllerId") as! MainInfoViewController
         
+        userInfoViewLS = self.storyboard?.instantiateViewControllerWithIdentifier("MainInfoViewControllerLSId") as! MainInfoViewController
+    
+        //viewInfoLS = userInfoViewLS.viewLS
         locationManeger.delegate = self
         locationManeger.desiredAccuracy = kCLLocationAccuracyBest
         if (UIDevice.currentDevice().systemVersion as NSString).doubleValue >= 8{
@@ -70,20 +85,26 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
         }
         
         self.mapView.delegate = self
+        self.mapViewLS.delegate = self
         
         userInfoView.delegate = self
+        userInfoViewLS.delegate = self
+        
         ActiveUser.sharedInstace.delegate = self
-        userInfoView.view.frame = CGRectMake(0, UIScreen.mainScreen().bounds.height - 149 , UIScreen.mainScreen().bounds.width, 105)
-        self.view.addSubview(userInfoView.view)
-        userInfoView.user = ActiveUser.sharedInstace
+       
         myLocationMarker.didTapMarker()
+        myLocationMarkerLS.didTapMarker()
         
         mapView.settings.myLocationButton = true
         mapView.myLocationEnabled = true
+        mapViewLS.settings.myLocationButton = true
+        mapViewLS.myLocationEnabled = true
         
         if self.cameFromNotification{
             self.notificationInterval = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "handleNotificationInBackgroundAndInactiveModes", userInfo: nil, repeats: true)
         }
+        
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
         
     }
     
@@ -94,12 +115,46 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
     override func viewWillLayoutSubviews(){
         //self.addSubviewsSettings()
         self.setSubviewsFrames()
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
         
     }
     override func viewWillAppear(animated: Bool) {
-        
+      NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
         self.addSubviewsSettings()
     }
+    
+    @IBAction func openViewLS(sender: UIButton) {
+        if !back{
+            back = true
+            viewLS.hidden = false
+            viewInViewLS.hidden = false
+            view.bringSubviewToFront(viewInViewLS)
+            if languageId == "he"
+            {
+                traingleLS.frame = CGRectMake(self.viewInViewLS.frame.origin.x - self.traingleLS.frame.size.width,self.traingleLS.frame.origin.y, self.traingleLS.frame.size.width, self.traingleLS.frame.size.height)
+            }
+            else
+            {
+                traingleLS.frame = CGRectMake(self.viewInViewLS.frame.origin.x + self.viewInViewLS.frame.size.width,self.traingleLS.frame.origin.y, self.traingleLS.frame.size.width, self.traingleLS.frame.size.height)
+            }
+        }
+        else if back {
+            viewInViewLS.hidden = true
+            view.sendSubviewToBack(viewInViewLS)
+            if languageId == "he"
+            {
+                traingleLS.frame = CGRectMake(self.viewInViewLS.frame.origin.x + self.viewInViewLS.frame.size.width - self.traingleLS.frame.size.width ,self.traingleLS.frame.origin.y, self.traingleLS.frame.size.width, self.traingleLS.frame.size.height)
+            }
+            else
+            {
+                traingleLS.frame = CGRectMake(self.viewInViewLS.frame.origin.x ,self.traingleLS.frame.origin.y, self.traingleLS.frame.size.width, self.traingleLS.frame.size.height)
+            }
+            back = false
+        }
+        
+        
+    }
+
     
     func addSubviewsSettings(){
         self.addNavigationSettings()
@@ -124,9 +179,100 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                 break
             }
         }
+        
+        self.gpsSettingsBtnLS = UIButton()
+        self.gpsSettingsBtnLS.setTitle("", forState: UIControlState.Normal)
+        self.gpsSettingsBtnLS.setTitle("", forState: UIControlState.Highlighted)
+        if CLLocationManager.locationServicesEnabled(){
+            self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps"), forState: UIControlState.Normal)
+            self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps-click"), forState: UIControlState.Highlighted)
+            
+        }else{
+            self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps_on"), forState: UIControlState.Normal)
+            self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps-on_click"), forState: UIControlState.Highlighted)
+        }
+        
+        self.gpsSettingsBtnLS.addTarget(self, action: "changeGpsSettings:", forControlEvents: UIControlEvents.TouchUpInside)
+        for view in self.view.subviews{
+            if view.isKindOfClass(UIButton){
+                view.removeFromSuperview()
+                break
+            }
+        }
+
         self.view.addSubview(gpsSettingsBtn)
         self.view.bringSubviewToFront(gpsSettingsBtn)
+        self.viewLS.addSubview(gpsSettingsBtnLS)
+        self.viewLS.bringSubviewToFront(gpsSettingsBtnLS)
+
     }
+    
+    
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            print("landscape")
+            view.bringSubviewToFront(viewLS)
+            self.check = true
+            viewLS.hidden = false
+            self.traingleLS.hidden = false
+//             viewInViewLS.frame = CGRectMake(self.viewInViewLS.frame.origin.x, self.view.frame.origin.y,self.viewInViewLS.frame.size.width, self.view.frame.height - 10)
+            
+            
+            mapViewLS.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)
+            
+            view.sendSubviewToBack(viewInViewLS)
+            //self.viewLS.addSubview(userInfoView.view)
+           
+            self.viewInViewLS.addSubview(userInfoViewLS.view)
+           // self.viewInViewLS.addSubview(userInfoView.viewLS)
+            if self.navigationController != nil
+            {
+            if languageId == "he"
+            {
+            userInfoViewLS.view.frame = CGRectMake(0,self.navigationController!.navigationBar.frame.size.height - 12 , 330, 242)
+            }
+            else
+            {
+            userInfoViewLS.view.frame = CGRectMake(0,self.navigationController!.navigationBar.frame.size.height - 12 , 330, 242)
+            }
+            }
+            //viewLS.bringSubviewToFront(userInfoView.viewLS)
+           
+             userInfoView.user = ActiveUser.sharedInstace
+            
+            
+            
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            print("Portrait")
+            if self.check
+            {
+                view.sendSubviewToBack(viewLS)
+                }
+                self.check = false
+                viewLS.hidden = true
+                self.traingleLS.hidden = true
+                //self.viewInViewLS.sendSubviewToBack(userInfoView.view)
+                
+            
+            
+            
+            
+            userInfoView.view.frame = CGRectMake(0, UIScreen.mainScreen().bounds.height - 149 , UIScreen.mainScreen().bounds.width, 105)
+            
+            self.view.addSubview(userInfoView.view)
+            userInfoView.user = ActiveUser.sharedInstace
+
+            
+            
+        }
+        
+    }
+
     
     func addNavigationSettings(){
         super.setNavigationBarSettings()
@@ -182,6 +328,7 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
     func setSubviewsFrames(){
 
         self.gpsSettingsBtn.frame = CGRectMake(50, 100, 70, 70)
+        self.gpsSettingsBtnLS.frame = CGRectMake(50, 100, 70, 70)
         
         for view in self.mapView.subviews{
             var viewClassString: NSString = view.className
@@ -191,12 +338,49 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                         
                         println("className:\(view2.className)")
                         var myLocationButton = view2 as! UIButton
-                        self.gpsSettingsBtn.frame = CGRectMake(myLocationButton.frame.origin.x, myLocationButton.frame.origin.y - myLocationButton.frame.size.height + 30, myLocationButton.frame.size.width, myLocationButton.frame.size.height)
+                        myLocationButton.frame = CGRectMake(myLocationButton.frame.origin.x, mapView.frame.origin.y + mapView.frame.size.height - 150,  myLocationButton.frame.size.width, myLocationButton.frame.size.height)
+                        self.gpsSettingsBtn.frame = CGRectMake(myLocationButton.frame.origin.x,  myLocationButton.frame.origin.y
+                            -  40  , myLocationButton.frame.size.width, myLocationButton.frame.size.height)
+                        
+                        
+
                         break
                     }
                 }
             }
         }
+        
+        for view in self.mapViewLS.subviews{
+            var viewClassString: NSString = view.className
+            if viewClassString.rangeOfString("GMSUISettingsView").location != NSNotFound {
+                for view2 in view.subviews{
+                    if view2.className == "GMSx_QTMButton"{//GMSx_QTMButton
+                        
+                        println("className:\(view2.className)")
+                        var myLocationButton = view2 as! UIButton
+                        if languageId == "en"
+                        {
+                        myLocationButton.frame = CGRectMake(myLocationButton.frame.origin.x, mapViewLS.frame.origin.y + mapViewLS.frame.size.height - 150, myLocationButton.frame.size.width, myLocationButton.frame.size.height)
+
+                        
+                        
+                        self.gpsSettingsBtnLS.frame = CGRectMake(myLocationButton.frame.origin.x, myLocationButton.frame.origin.y - 70, myLocationButton.frame.size.width, myLocationButton.frame.size.height)
+                        break
+                        }
+                        else
+                        {
+                            myLocationButton.frame = CGRectMake(mapViewLS.frame.origin.x + 20, mapViewLS.frame.origin.y + mapViewLS.frame.size.height - 150, myLocationButton.frame.size.width, myLocationButton.frame.size.height)
+                            
+                            
+                            
+                            self.gpsSettingsBtnLS.frame = CGRectMake(myLocationButton.frame.origin.x, myLocationButton.frame.origin.y - 70, myLocationButton.frame.size.width, myLocationButton.frame.size.height)
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
     }
     
     func addBarView(){
@@ -223,8 +407,7 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
     }
     
     @IBAction func sendGlobalMessage(sender: AnyObject) {
-
-        var alert = UIAlertController(title: NSLocalizedString("General Notice", comment: "") as String, message: NSLocalizedString("Message to group", comment: "") as String, preferredStyle: UIAlertControllerStyle.Alert)
+        var alert = UIAlertController(title: NSLocalizedString("General Notice", comment: "") as String, message: nil, preferredStyle: UIAlertControllerStyle.Alert)
         alert.addTextFieldWithConfigurationHandler(addTextField)
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancellation", comment: "") as String /*"ביטול"*/, style: UIAlertActionStyle.Cancel, handler: nil))//"Submit"
         alert.addAction(UIAlertAction(title:NSLocalizedString("Submit", comment: "") as String /*"שלח"*/, style: UIAlertActionStyle.Default, handler:{ action in action.style
@@ -259,7 +442,8 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
     
     func addTextField(textField: UITextField!){
         // add the text field and make the result global
-        textField.placeholder = NSLocalizedString("Email", comment: "") as String//"מייל"
+        textField.placeholder = ""
+//        textField.placeholder = NSLocalizedString("Email", comment: "") as String//"מייל"
         textField.textAlignment = NSTextAlignment.Center
         self.alertTxtField = textField
     }
@@ -274,6 +458,8 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
             locationManeger.startUpdatingLocation()
             mapView.myLocationEnabled = true
             mapView.settings.myLocationButton = true
+            mapViewLS.myLocationEnabled = true
+            mapViewLS.settings.myLocationButton = true
         }
     }
     
@@ -281,7 +467,9 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
         if let location = locations.first as? CLLocation{
             if mapViewCameraFlg {
                 mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
+                  mapViewLS.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
                 myLocationMarker.map = self.mapView
+                myLocationMarkerLS.map = self.mapViewLS
                 mapViewCameraFlg = false
                 self.updateUserLocationInServer()
                 self.timeInterval = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "updateUserLocationInServer", userInfo: nil, repeats: true)
@@ -289,12 +477,17 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
             
             myLocationMarker.position = location.coordinate
             myLocationMarker.flat = false
+            myLocationMarkerLS.position = location.coordinate
+            myLocationMarkerLS.flat = false
+
             
             ActiveUser.sharedInstace.oLocation.dLatitude = location.coordinate.latitude
             ActiveUser.sharedInstace.oLocation.dLongitude = location.coordinate.longitude
             
             self.gpsSettingsBtn.setBackgroundImage(UIImage(named: "gps"), forState: UIControlState.Normal)
             self.gpsSettingsBtn.setBackgroundImage(UIImage(named: "gps-click"), forState: UIControlState.Highlighted)
+            self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps"), forState: UIControlState.Normal)
+            self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps-click"), forState: UIControlState.Highlighted)
         }
     }
     
@@ -302,6 +495,8 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
         self.locationManeger.stopUpdatingLocation()
         self.gpsSettingsBtn.setBackgroundImage(UIImage(named: "gps_on"), forState: UIControlState.Normal)
         self.gpsSettingsBtn.setBackgroundImage(UIImage(named: "gps-on_click"), forState: UIControlState.Highlighted)
+        self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps_on"), forState: UIControlState.Normal)
+        self.gpsSettingsBtnLS.setBackgroundImage(UIImage(named: "gps-on_click"), forState: UIControlState.Highlighted)
         println(error)
         if (UIDevice.currentDevice().systemVersion as NSString).doubleValue >= 8{
             var alert = UIAlertController(title: "Error", message: "An error accurate\nPlease check youre GPS connection", preferredStyle: UIAlertControllerStyle.Alert)
@@ -318,6 +513,8 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
         }
         
         self.userInfoView.view.hidden = true
+        self.userInfoViewLS.view.hidden = true
+        
     }
     
     func mapView(mapView: GMSMapView!, didTapMarker marker: GMSMarker!) -> Bool {
@@ -331,14 +528,30 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
             }
         }
         
+        if self.userInfoViewLS.user != nil{
+            var idu = String("\(self.userInfoViewLS.user!.iUserId)")
+            println("lastMarker id:\(idu)")
+            if let lastMarker = self.usersMarkers.objectForKey(String("\(self.userInfoViewLS.user!.iUserId)")) as? ShantiMarker{
+                lastMarker.didReleasMarker()
+            }
+        }
+
+        
+        
+        
         if let currMarker = marker as? ShantiMarker {
             currMarker.didTapMarker()
             self.userInfoView.user = currMarker.user
+            self.userInfoViewLS.user = currMarker.user
+
+            
             self.setLineViewHiddeSettings(false)
         }
         else if let currMarker = marker as? MeetingPointMarker
         {
             self.userInfoView.meetingPoint = currMarker.meetingPoint
+            self.userInfoViewLS.meetingPoint = currMarker.meetingPoint
+            
         }
 //        appDelegate.didTap = false
         return true
@@ -392,6 +605,13 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                                 self.userInfoView.changeText(self.userInfoView.lblNote, text: usersListDetails.usersDetails)
                             })
                         }
+                        if self.userInfoViewLS.user?.iUserId == ActiveUser.sharedInstace.iUserId{
+                            dispatch_async(dispatch_get_main_queue(), {
+                                self.userInfoViewLS.changeText(self.userInfoViewLS.lblNote, text: usersListDetails.usersDetails)
+                            })
+                        }
+
+                        
                     }
                 }
             })
@@ -466,6 +686,7 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                         UIView.setAnimationDuration(1)
                         marker.position = CLLocationCoordinate2D(latitude: marker.user.oLocation.dLatitude,longitude: marker.user.oLocation.dLongitude)
                         marker.map = self.mapView
+                        marker.map = self.mapViewLS
                         UIView.commitAnimations()
                     })
                     
@@ -482,6 +703,7 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                     UIView.setAnimationDuration(1)
                     marker.position = CLLocationCoordinate2D(latitude: marker.meetingPoint.oLocation.dLatitude,longitude: marker.meetingPoint.oLocation.dLongitude)
                     marker.map = self.mapView
+                    marker.map = self.mapViewLS
                     UIView.commitAnimations()
                 })
             }
@@ -519,6 +741,8 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
             let chatView = self.storyboard!.instantiateViewControllerWithIdentifier("PrivateChatViewControllerId") as! PrivateChatViewController
             chatView.dialog = chatDialog
             chatView.user = self.userInfoView.user!
+            chatView.user = self.userInfoViewLS.user!
+            
             self.navigationController?.pushViewController(chatView, animated: true)
         }
     }
@@ -527,13 +751,19 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
         if withHidden
         {
             self.userInfoView.view.hidden = true
+            self.userInfoViewLS.view.hidden = true
+            
             self.underLineView.hidden = true
-            self.mapView.frame = CGRectMake(self.mapView.frame.origin.x, self.mapView.frame.origin.y, self.mapView.frame.size.width, self.barView.frame.origin.y - self.barView.frame.origin.y)
+            self.mapView.frame = CGRectMake(self.mapView.frame.origin.x, self.mapView.frame.origin.y, self.mapView.frame.size.width, self.barView.frame.origin.y - self.barView.frame.origin.y - 20)
             self.mapView.sizeToFit()
+            //
+            mapView.bringSubviewToFront(underLineView)
         }
         else
         {
             self.userInfoView.view.hidden = false
+            self.userInfoViewLS.view.hidden = false
+            
             self.underLineView.hidden = false
             
             if self.userInfoView.user == ActiveUser.sharedInstace
@@ -545,6 +775,19 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                 self.lblUnderLine.backgroundColor = UIColor.greenHome()
                 self.imgTraingle.image = UIImage(named: "traingle-green")
             }
+            
+//            if self.userInfoViewLS.user == ActiveUser.sharedInstace
+//            {
+//                self.lblUnderLine.backgroundColor = UIColor.purpleHome()
+//                self.imgTraingle.image = UIImage(named: "traingle-purple")
+//            }else
+//            {
+//                self.lblUnderLine.backgroundColor = UIColor.greenHome()
+//                self.imgTraingle.image = UIImage(named: "traingle-green")
+//            }
+
+            
+            
             
         }
     }
@@ -577,10 +820,15 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                 
                 self.mapView.camera = nil
                 self.mapView.camera = GMSCameraPosition(target: self.locationManeger.location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
+                self.mapViewLS.camera = nil
+                self.mapViewLS.camera = GMSCameraPosition(target: self.locationManeger.location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
                 
                 var marker = GMSMarker()
                 marker.position = self.myLocationMarker.position
+                marker.position = self.myLocationMarkerLS.position
                 marker.map = self.mapView
+                marker.map = self.mapViewLS
+
                 marker.icon = UIImage(named: "create_meeting_long_press")
                 marker.draggable = true
                 
@@ -680,6 +928,7 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
                 let path: GMSPath = GMSPath(fromEncodedPath: points)
                 var routePolyline = GMSPolyline(path: path)
                 routePolyline.map = self.mapView
+                routePolyline.map = self.mapViewLS
                 routePolyline.strokeColor = UIColor.greenHome()
     }
     
@@ -691,6 +940,8 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
     
     func changeWaintingMessagesCounter(counter: Int) {
         self.userInfoView.setUserInfoViewNotificationIndicator(counter)
+        self.userInfoViewLS.setUserInfoViewNotificationIndicator(counter)
+        
     }
     
     func changeGpsSettings(sender: AnyObject){
@@ -699,7 +950,7 @@ class MainPage: GlobalViewController,CLLocationManagerDelegate,GMSMapViewDelegat
         locationManeger.stopUpdatingLocation()
     }
     
-    ////////////////////////////////// NOTIFICATION HANDLER //////////////////////////////////
+    
     
     func handleNotificationInBackgroundAndInactiveModes(){
         self.notificationInterval.invalidate()

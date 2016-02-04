@@ -18,16 +18,16 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
     @IBOutlet weak var txtPhone: UITextField!
     @IBOutlet weak var btnContinue: UIButton!
     
-    @IBOutlet weak var txtViewTermsConditionsPrivacyPolicy: UITextView!
     @IBOutlet weak var scrollView_view: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var txtShantiName: UITextField!
     @IBOutlet weak var txtPrefix: UITextField!
     @IBOutlet weak var lblSpace: UILabel!
+    @IBOutlet weak var txtViewTermsConditionsPrivacyPolicy: UITextView!
     @IBOutlet var textFieldToBottomLayoutGuideConstraint: NSLayoutConstraint!
     var loginWay = String()
-    
-    var userRegister: User = User()
+    var loginWayNow = "-1"
+    var userRegister:User = User()
     var prefix: PrefixViewController = PrefixViewController()
     
     var countriesArry: NSMutableArray = NSMutableArray()
@@ -43,19 +43,29 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
     var keyboardSize: CGRect!
     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var temp:Bool = true
+    
+override func viewWillLayoutSubviews() {
+    if self.scrollView.frame.size.height > self.view.frame.size.height
+    {
+    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width,self.scrollView.frame.size.height + 180)
+    }
+    }
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
         self.addPageGraphics()
         self.setDelegates()
         var txtvalid: UITextField
+
         
-        var loginWayNow = "-1"
         if let loginWay = NSUserDefaults.standardUserDefaults().valueForKey("loginWay") as? String
         {
-            loginWayNow = loginWay
+            loginWayNow = (loginWay as? String)!
         }
-        if loginWayNow == "faceBook" || loginWayNow == "google+"
+//       loginWayNow = NSUserDefaults.standardUserDefaults().valueForKey("loginWay") as! String
+            if loginWayNow == "faceBook" || loginWayNow == "google+"
+//        if appDelegate.isGoogle == true || appDelegate.isFaceBook == true
         {
             txtName.text = ActiveUser.sharedInstace.nvFirstName
             txtLastName.text = ActiveUser.sharedInstace.nvLastName
@@ -80,36 +90,6 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         self.dismissControllers()
     }
     
-    func textTapped(recognizer: UITapGestureRecognizer)
-    {
-        if let textView = recognizer.view as? UITextView
-        {
-            if let layoutManager = textView.layoutManager as? NSLayoutManager
-            {
-                var location: CGPoint = recognizer.locationInView(textView)
-                location.x -= textView.textContainerInset.left
-                location.y -= textView.textContainerInset.top
-                
-                var charIndex = layoutManager.characterIndexForPoint(location, inTextContainer: textView.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-                
-                if charIndex < textView.textStorage.length
-                {
-                    if charIndex > 44 && charIndex < 66
-                    {
-                        var termsAndConditionsViewController: TermsAndConditionsViewController = self.storyboard?.instantiateViewControllerWithIdentifier("TermsAndConditionsViewControllerId") as! TermsAndConditionsViewController
-                        self.navigationController!.pushViewController(termsAndConditionsViewController, animated: true)
-                    }
-                    else
-                    if charIndex > 120 && charIndex < 135
-                    {
-                        var privacyPolicyViewController: PrivacyPolicyViewController = self.storyboard?.instantiateViewControllerWithIdentifier("PrivacyPolicyViewControllerId") as! PrivacyPolicyViewController
-                        self.navigationController!.pushViewController(privacyPolicyViewController, animated: true)
-                    }
-                }
-            }
-        }
-    }
-    
     func addPageGraphics(){
         
         //Signing up
@@ -123,6 +103,8 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         txtLastName.placeholder = NSLocalizedString("Last Name", comment: "")  as String // "שם משפחה"
         txtPhone.placeholder = NSLocalizedString("Mobile", comment: "")  as String // "נייד"
         btnContinue.setTitle(NSLocalizedString("Continued", comment: "")  as String, forState: UIControlState.Normal)
+     
+        
         
         var myString:NSString = NSLocalizedString("By signing up with shanty I agree to all the terms and conditions of the people, groups and their personal details, and privacy policy as specified in the Company's articles.", comment: "")  as String
         
@@ -148,7 +130,6 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         let   tapGesture = UITapGestureRecognizer(target: self, action: "textTapped:")
         tapGesture.numberOfTapsRequired = 1
         self.txtViewTermsConditionsPrivacyPolicy.addGestureRecognizer(tapGesture)
-        
         
         txtShantiName.placeholder =  NSLocalizedString("User name", comment: "")  as String // "שם משתמש"
         lblSpace.text = "-"
@@ -203,7 +184,7 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         //textAlignment
         var space: CGFloat = 10
         var textAlignment: NSTextAlignment = .Left
-        //        let languageId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
+//        let languageId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
         if languageId == "he"{
             textAlignment = .Right
             space = -space
@@ -255,6 +236,7 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         self.txtShantiName.frame = CGRectMake(self.btnContinue.frame.origin.x,  self.txtPassword.frame.origin.y - spaceBetweenTxtFields - txtsHight , txtsWidth, txtsHight)
         self.txtMail.frame = CGRectMake(self.btnContinue.frame.origin.x,  self.txtShantiName.frame.origin.y - spaceBetweenTxtFields - txtsHight , txtsWidth, txtsHight)
         self.lblPersonalDetails.frame = CGRectMake(self.btnContinue.frame.origin.x,  self.txtMail.frame.origin.y - spaceBetweenTxtFields - self.lblPersonalDetails.frame.size.height, txtsWidth, self.lblPersonalDetails.frame.size.height)
+       
         
     }
     
@@ -279,6 +261,7 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         self.txtPhone.resignFirstResponder()
         self.txtShantiName.resignFirstResponder()
         self.txtPrefix.resignFirstResponder()
+        
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width,self.scrollView.frame.size.height)
         self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)
         UIView.commitAnimations()
@@ -374,7 +357,6 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         
     }
     
-    
     func textFieldShouldReturn(textField: UITextField) -> Bool{
         self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height)
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width,self.scrollView.frame.size.height)
@@ -384,13 +366,11 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
     
     func isValidEmail(testStr:String) -> Bool {
         println("validate calendar: \(testStr)")
-        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
-        
+        let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
         var emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         let result = emailTest.evaluateWithObject(testStr)
         return result
-    }
-    
+    }    
     func isValidPhone(testStr:String) -> Bool {
         println("validate calendar: \(testStr)")
         let phoneRegEx = "^[0-9]{9}$"
@@ -399,6 +379,16 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         let result = phoneTest.evaluateWithObject(testStr)
         return result
     }
+    
+    func isValidPassword(testStr:String) -> Bool {
+        println("validate calendar: \(testStr)")
+       // let passwordRegEx = "^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8}$"
+        let passwordRegEx = "^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8}$"
+        var PasswordTest = NSPredicate(format:"SELF MATCHES %@", passwordRegEx)
+        let result = PasswordTest.evaluateWithObject(testStr)
+        return result
+    }
+
     
     func isValidPhonePrefix(testStr:String) -> Bool
     {
@@ -415,8 +405,8 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
     func checkRequiredFields() -> Bool
     {
         var whatToReturn = false
-        if self.loginWay == "faceBook" || self.loginWay == "google+"
-            //        if self.appDelegate.isGoogle == true || self.appDelegate.isFaceBook == true
+            if self.loginWayNow == "faceBook" || self.loginWayNow == "google+"
+//
         {
             if self.checkByGooglPlus() == true
             {
@@ -426,7 +416,8 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
         }
         else
         {
-            if txtPassword.text != nil && txtPassword.text != "" && txtPassword.text != " " && txtMail.text != nil && txtMail.text != "" && txtMail.text != " " && txtShantiName.text != nil && txtShantiName.text != "" && txtShantiName.text != " "
+            if txtPassword.text != nil && txtPassword.text != "" && txtPassword.text != " " &&
+                isValidPassword(txtPassword.text) && txtMail.text != nil && txtMail.text != "" && txtMail.text != " " && isValidEmail(txtMail.text) && txtName.text != "" && txtLastName.text != "" && txtShantiName.text != nil && txtShantiName.text != "" && txtShantiName.text != " "
             {
                 if txtPhone.text != nil && isValidPhone(txtPhone.text) && txtPhone.text != "" && txtPhone.text != " " && txtPrefix.text != nil && txtPrefix.text != "" && txtPrefix.text != " " && isValidPhonePrefix(txtPhone.text)
                 {
@@ -443,7 +434,7 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
     }
     func checkByGooglPlus()->Bool
     {
-        if txtMail.text != nil && txtMail.text != "" && txtMail.text != " " && txtShantiName.text != nil && txtShantiName.text != "" && txtShantiName.text != " "
+        if txtMail.text != nil && txtMail.text != "" && txtMail.text != " "  && txtName.text != "" && isValidEmail(txtMail.text) && txtLastName.text != "" && txtShantiName.text != nil && txtShantiName.text != "" && txtShantiName.text != " "
         {
             self.temp = true
             if txtPhone.text != nil && isValidPhone(txtPhone.text) && txtPhone.text != "" && txtPhone.text != " " && txtPrefix.text != nil && txtPrefix.text != "" && txtPrefix.text != " " && isValidPhonePrefix(txtPhone.text)
@@ -475,6 +466,7 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
                 case 0:
                     self.nextPage()
                     break
+
                 case -1:
                     self.txtShantiName.text = ""
                     var alert = UIAlertController(title: "", message: "bad request", preferredStyle: UIAlertControllerStyle.Alert)
@@ -515,24 +507,83 @@ class RegisterViewController:GlobalViewController,UITextFieldDelegate ,UIGesture
             else if !isValidPhonePrefix(txtPhone.text){
                 messageAlert=NSLocalizedString("Please select the mobile field without the prefix 0", comment: "") as String/*//"0 אנא מלא את שדה הנייד  ללא קידומת !"*/
             }
+                
             else{
+                if txtPassword.text == "" || txtShantiName.text == "" || txtMail.text == "" || txtPhone.text == ""
+                {
                 messageAlert=NSLocalizedString("Please select the mandatory fields: Email, Username, and Password, portable prefix", comment: "") as String/*"אנא מלא את שדות החובה: מייל, שם משתמש, סיסמה, נייד וקידומת"*/
+                }
             }
-            
-            //        var messageAlert: String?
-            if !isValidPhone(txtPhone.text){
-                messageAlert=NSLocalizedString("Please fill the mobile field nine digits!,Without prefix", comment: "") as String/*"אנא מלא את שדה הנייד בעשר ספרות בלבד!"*/
-            }else
-            {
-                messageAlert=NSLocalizedString("Please select the mandatory fields: Email, Username, and Password, portable prefix", comment: "") as String/*"אנא מלא את שדות החובה: מייל, שם משתמש, סיסמה, נייד וקידומת"*/
-                var alert = UIAlertController(title: "", message: messageAlert, preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: NSLocalizedString("Confirmation", comment: "") as String/*"אשור"*/, style: UIAlertActionStyle.Default, handler: nil))
-                self.presentViewController(alert, animated: true, completion: nil)
+            if isValidEmail(txtMail.text) == false{
+                messageAlert = NSLocalizedString("Faulty email address", comment: "") as String
                 
             }
-        }
+                else if isValidPassword(txtPassword.text) == false
+            {
+                messageAlert = NSLocalizedString("Faulty password", comment: "") as String
+            }
+            else if txtName.text == "" || txtLastName.text == ""
+            {
+                messageAlert = NSLocalizedString("Please fill the first name and last name field", comment: "") as String
+
+            }
+
         
+//        var messageAlert: String?
+//        if !isValidPhone(txtPhone.text){
+//            messageAlert=NSLocalizedString("Please fill the mobile field nine digits!,Without prefix", comment: "") as String/*"אנא מלא את שדה הנייד בעשר ספרות בלבד!"*/
+//        }else
+//        {
+//            if !isValidEmail(txtMail.text){
+//                messageAlert = NSLocalizedString("Faulty email address", comment: "") as String
+//                
+//            }
+//            else{
+//            messageAlert=NSLocalizedString("Please select the mandatory fields: Email, Username, and Password, portable prefix", comment: "") as String/*"אנא מלא את שדות החובה: מייל, שם משתמש, סיסמה, נייד וקידומת"*/
+//            }
+//
+            if messageAlert != "" && messageAlert != nil
+            {
+            var alert = UIAlertController(title: "", message: messageAlert, preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Confirmation", comment: "") as String/*"אשור"*/, style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+            }
+        }
+
+
+        }
+    
+    
+    func textTapped(recognizer: UITapGestureRecognizer)
+    {
+        if let textView = recognizer.view as? UITextView
+        {
+            if let layoutManager = textView.layoutManager as? NSLayoutManager
+            {
+                var location: CGPoint = recognizer.locationInView(textView)
+                location.x -= textView.textContainerInset.left
+                location.y -= textView.textContainerInset.top
+                
+                var charIndex = layoutManager.characterIndexForPoint(location, inTextContainer: textView.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+                
+                if charIndex < textView.textStorage.length
+                {
+                    if charIndex > 44 && charIndex < 66
+                    {
+                        var termsAndConditionsViewController: TermsAndConditionsViewController = self.storyboard?.instantiateViewControllerWithIdentifier("TermsAndConditionsViewControllerId") as! TermsAndConditionsViewController
+                        self.navigationController!.pushViewController(termsAndConditionsViewController, animated: true)
+                    }
+                    else
+                        if charIndex > 120 && charIndex < 135
+                        {
+                            var privacyPolicyViewController: PrivacyPolicyViewController = self.storyboard?.instantiateViewControllerWithIdentifier("PrivacyPolicyViewControllerId") as! PrivacyPolicyViewController
+                            self.navigationController!.pushViewController(privacyPolicyViewController, animated: true)
+                    }
+                }
+            }
+        }
     }
+   
     func nextPage(){
         if (/*self.isValidEmail(txtMail.text)*/true){
             self.userRegister.oUserMemberShip.nvUserName = (txtMail.text != nil ) ? txtMail.text : ""

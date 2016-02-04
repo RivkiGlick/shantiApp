@@ -5,6 +5,9 @@
  Created by hodaya ohana on 10/14/15.
  Copyright (c) 2015 webit. All rights reserved.
  */
+"apply" = "Apply";
+"Coming soon" = "Coming soon... ";
+"no friend" = "You have no friends group";
 "You are here" = "You are here";//את/ה נמצא כאן
 "More about" = "More about";//עוד על
 "Display from yesterday" = "Display from yesterday";//הצג מאתמול
@@ -19,6 +22,7 @@
 "Messages" = "Messages";//הודעות
 "Information" = "Information";//מידע
 "Home" = "Map";//ראשי
+"Error signup chat" = "Error signup chat";
 "This option will be supported in future versions" = "This option will be supported in future versions";
 "Error in obtaining data from the server, check network connections" = "Error in obtaining data from the server, check network connections";//שגיאה בקבלת נתונים מהשרת, בדוק חיבורי רשת
 "General Notice" = "General Notice";//הודעה כללית
@@ -74,16 +78,18 @@
 "Signing up" = "Signing up";//הרשמה
 "Email address recorded in the system" = "Email address recorded in the system";//כתובת המייל קיימת במערכת
 "Display more options" = "Display more options";//הצג עוד אפשרויות
-"Personal details" = "Personal details";//פרטים אישיים
+"Personal details" = "Personal";//פרטים אישיים
 "Continued" = "Continued";//המשך
 "Username recorded in the system" = "Username recorded in the system";//שם משתמש קיים במערכת
 "Faulty email address" = "Faulty email address";//כתובת מייל לא תקינה
 "Please enter at least 2 characters" = "Please enter at least 2 characters";//יש להכניס לפחות 2 תווים
+"Please fill the first name and last name field" = "Please fill the first name and last name field";
 "Enter between 2 to 15 characters" = "Enter between 2 to 15 characters";//יש להכניס בין 2 ל 15 תווים
 "Faulty phone number" = "Faulty phone number";//מספר טלפון לא תקין
 "Please enter data" = "Please enter data";//יש להזין נתונים
 "Please select a country" = "Please select a country";//יש לבחור מדינה
-"By signing up with shanty I agree to all the terms and conditions of the people, groups and their personal details, and privacy policy as specified in the Company's articles." = "By signing up with shanty I agree to all the terms and conditions of the people, groups and their personal details, and privacy policy as specified in the Company's articles.";//בהרשמה לשאנטי אני מסכים לכל
+"By signing up with shanty I agree to all the terms and conditions of the people, groups and their personal details, and privacy policy as specified in the Company's articles." = "By signing up with shanty I agree to all the terms and conditions of the people, groups and their personal details, and privacy policy as specified in the Company's articles.";
+"By signing up with shanty I agree to all" = "By signing up with shanty I agree to all";//בהרשמה לשאנטי אני מסכים לכל
 "the terms and conditions" = "the terms and conditions";//התנאים וההגבלות
 "of the people, groups and their personal details," = "of the people, groups and their personal details,";//של האנשים, הקבוצות ופרטיהם האישיים,
 "and privacy policy" = "and privacy policy";//ומדיניות הפרטיות
@@ -92,7 +98,8 @@
 "Date of Birth" = "Date of Birth";//תאריך לידה
 "Gender" = " Gender";//מין
 "Age Range" = "Age Range";//טווח גיל
-"Faith" = "Faith";//דת
+"Faith" = "Religious Observance";
+
 "Faith affiliation" = "Faith affiliation";//יחס לדת
 "Set up your profile" = "Set up your profile";//הגדר את הפרופיל שלך
 "Sign Up" = "Sign Up";//הרשם
@@ -131,7 +138,7 @@
 "New message" = "New message";//הודעה חדשה
 "Sign in" = "Sign in";//היכנס
 "Sign In to see her" = "Sign In to see her";//היכנס כדי לראות אותה
-"Cancellation" = "Cancellation";//ביטול
+"Cancellation" = "Cancel";//ביטול
 "Yes." = "Yes.";//כן
 "No." = "No.";//לא
 "New chat message from" = "New chat message from";//הודעת צ'אט חדשה מ
@@ -155,9 +162,9 @@
 "Close" = "Close";
 "Delete" = "Delete";
 "Remove" = "Remove";
-"Personal Profile" = "Personal Profile";
-"Supplemental details" = "Supplemental details";
-"More about yourself" = "More about yourself";
+"Personal Profile" = "Profile";
+"Supplemental details" = "Supplemental";
+"More about yourself" = "More about yourself...";
 "An error occurred; data was not saved" = "An error occurred; data was not saved";
 "Data was saved" = "Data was saved";
 "Problem in loading controls" = "Problem in loading controls";
@@ -252,8 +259,8 @@
 "Error" = "Error";
 "Select" = "Select";
 "Filter"="Filter";
-"Sorting by Name"="Sorting by Name";
-"Sorting by Distance"="Sorting by Distance";
+"Sorting by Name"="Sort Name";
+"Sorting by Distance"="Sort Distance";
 "Registration failed" = "Registration failed";
 "Select a source image" = "Select a source image";
 "Camera" = "Camera";
@@ -267,11 +274,8 @@
 "Adding" = "Group administrator";
 "Image group:" = "Image group:";
 "Shanti Name" = "Shanti Name";
-"Apply" = "Apply";
-//"Apply" = "";
+"A" = "AD";
+
+
 "A temporary problem fetching data from the server, please try later" = "A temporary problem fetching data from the server, please try later" ;
 "Fail update youre profile" = "Fail update youre profile";
-"You have no friends group" = "You have no friends group";//
-"You tried three times to enter the apps you have to wait 15 minutes" = "You tried three times to enter the apps you have to wait 15 minutes";
-"Terms and Conditions" = "Terms and Conditions";
-"Privacy Policy" = "Privacy Policy";

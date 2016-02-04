@@ -8,16 +8,17 @@
 
 import UIKit
 
-class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
+class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate,UITextFieldDelegate {
     
-    @IBOutlet weak var lblTimer: UILabel!
     @IBOutlet weak var txtUserName: UITextField!
     @IBOutlet weak var txtPassword: UITextField!
     @IBOutlet weak var btnForgotPassword: UIButton!
     @IBOutlet weak var btnLogin: UIButton!
+     @IBOutlet weak var lblTimer: UILabel!
     var countLoginTimes = 0
     var counter = 0
     var timer:NSTimer = NSTimer()
+
     
     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     
@@ -31,10 +32,16 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
         let tapGesture = UITapGestureRecognizer(target: self, action: "dismissControllers")
         tapGesture.delegate = self
         self.view.addGestureRecognizer(tapGesture)
-        
+        txtPassword.delegate = self
+        txtUserName.delegate = self
         txtUserName.text = (NSUserDefaults.standardUserDefaults().objectForKey("userName") != nil) ? NSUserDefaults.standardUserDefaults().objectForKey("userName") as! String : ""
         txtPassword.text = (NSUserDefaults.standardUserDefaults().objectForKey("password")  != nil) ? NSUserDefaults.standardUserDefaults().objectForKey("password") as! String : ""
         
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -97,7 +104,8 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
         let controllersX = CGFloat((UIScreen.mainScreen().bounds.size.width - txtsWidth)/2)
         
         let loginWay = NSUserDefaults.standardUserDefaults().valueForKey("loginWay") as? String
-
+        
+//        if appDelegate.isFaceBook || appDelegate.isGoogle
             if loginWay == "faceBook" || loginWay == "google+"
         {
             self.txtPassword.enabled = false
@@ -127,7 +135,7 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
             NSUserDefaults.standardUserDefaults().setObject(txtUserName.text, forKey: "userName")
             NSUserDefaults.standardUserDefaults().setObject(txtPassword.text, forKey: "password")
             NSUserDefaults.standardUserDefaults().synchronize()
-            Connection.connectionToService("LoginGoogle", params: ["id":GPPSignIn.sharedInstance().userID], completion: {data -> Void in
+            Connection.connectionToService("LoginGoogle", params: ["id":GPPSignIn.sharedInstance().userID,"DeviceId":455], completion: {data -> Void in
                 var strData = NSString(data: data, encoding: NSUTF8StringEncoding)
                 println("Login:\(strData)")
                 var err: NSError?
@@ -150,11 +158,13 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
                         ActiveUser.loginToQuickBloxWithCurrentUser()
                         ActiveUser.sendDeviceTokenToServer()
                     }
+                        
                     else
                     {
                         self.countLoginTimes++
                         self.checkIfLoginMoreThanThreeTimes()
                     }
+                    
                     
                 }
                 
@@ -164,7 +174,7 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
         if loginWay == "faceBook"
 //            if appDelegate.isFaceBook
             {
-                Connection.connectionToService("LoginFacebook", params: ["id":ActiveUser.sharedInstace.nvFacebookUserId], completion: {data -> Void in
+                Connection.connectionToService("LoginFacebook", params: ["id":ActiveUser.sharedInstace.nvFacebookUserId,"DeviceId":455], completion: {data -> Void in
                     var strData = NSString(data: data, encoding: NSUTF8StringEncoding)
                     println("Login:\(strData)")
                     var err: NSError?
@@ -203,7 +213,7 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
         {
         if txtPassword.text == "" || txtUserName.text == ""
         {
-            self.countLoginTimes++
+            
             var alert = UIAlertController(title: "נא מלא שם וסיסמא", message: "", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "אישור", style: UIAlertActionStyle.Default, handler: nil))
             self.presentViewController(alert, animated: true, completion: nil)
@@ -216,7 +226,7 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
         NSUserDefaults.standardUserDefaults().setObject(txtUserName.text, forKey: "userName")
         NSUserDefaults.standardUserDefaults().setObject(txtPassword.text, forKey: "password")
         NSUserDefaults.standardUserDefaults().synchronize()
-        Connection.connectionToService("Login", params: ["name":txtUserName.text,"id":txtPassword.text], completion: {data -> Void in
+        Connection.connectionToService("Login", params: ["name":txtUserName.text,"id":txtPassword.text, "DeviceId":455 ], completion: {data -> Void in
             var strData = NSString(data: data, encoding: NSUTF8StringEncoding)
             println("Login:\(strData)")
             var err: NSError?
@@ -243,12 +253,11 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
                 {
                     self.countLoginTimes++
                     self.checkIfLoginMoreThanThreeTimes()
-                    generic.hideNativeActivityIndicator(self)//
-
+                    generic.hideNativeActivityIndicator(self)
+                    
                 }
                 
             }
-            
         })
         }
         }
@@ -259,10 +268,10 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
         if self.countLoginTimes > 2
         {
             var alert = UIAlertController(title: "", message: NSLocalizedString("You tried three times to enter the apps you have to wait 15 minutes", comment: "") as String, preferredStyle: UIAlertControllerStyle.Alert)
-           self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateLoginTimes", userInfo: nil, repeats: true)
+            self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateLoginTimes", userInfo: nil, repeats: true)
             alert.addAction(UIAlertAction(title:NSLocalizedString("Confirmation", comment: ""), style: UIAlertActionStyle.Cancel, handler: {
                 action -> Void in
-               
+                
                 println()
             }))
             
@@ -303,8 +312,10 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
             self.counter = 0
         }
     }
- 
+
+    
     func addTextField(textField: UITextField!){
+        // add the text field and make the result global
         textField.placeholder = NSLocalizedString("Email", comment: "") as String//Email
         textField.textAlignment = NSTextAlignment.Center
         self.alertTxtField = textField
@@ -312,6 +323,7 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
     
     
     @IBAction func forgotPassword(sender: AnyObject) {
+//        var alert = UIAlertController(title: "שכחת סיסמה?", message: "הכנס את כתובת המייל שאיתה נרשמת, ואנו נשלח אליך את הסיסמה.", preferredStyle: UIAlertControllerStyle.Alert)
         var alert = UIAlertController(title: "", message: String((NSLocalizedString("e-mail address you registered with", comment: "") as String)+" , "+(NSLocalizedString("The password will be sent to you by e-mail", comment: "") as String)), preferredStyle: UIAlertControllerStyle.Alert)
 //Confirmation
         alert.addTextFieldWithConfigurationHandler(addTextField)
@@ -338,6 +350,11 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
         
         let writingDirection = UIApplication.sharedApplication().userInterfaceLayoutDirection
         
+//        var localizedLoginOption = NSLocalizedString("Select one of the login options", comment: "")
+//        var localizedLogin = NSLocalizedString("Login", comment: "")
+//        var localizedSigningUp = NSLocalizedString("Signing up", comment: "")
+       // lblTitle.text = localizedLoginOption as String
+        
         self.btnLogin.setTitle(NSLocalizedString("Login", comment: "") as String, forState: UIControlState.Normal)
         self.btnLogin.setTitle(NSLocalizedString("Login", comment: "") as String, forState: UIControlState.Highlighted)
       
@@ -361,6 +378,7 @@ class LoginViewController: GlobalViewController,UIGestureRecognizerDelegate {
             
             let mainPage: UsersListViewController = self.storyboard!.instantiateViewControllerWithIdentifier("UsersListViewControllerID") as! UsersListViewController
             
+            //  let mainPage: MainPage = self.storyboard!.instantiateViewControllerWithIdentifier("MainPageId") as! MainPage
             self.navigationController!.pushViewController(mainPage, animated: true)
             generic.hideNativeActivityIndicator(self)
             appDelegate.timer.invalidate()

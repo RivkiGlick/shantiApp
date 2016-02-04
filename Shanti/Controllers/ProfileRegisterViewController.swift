@@ -16,8 +16,10 @@ class ProfileRegisterViewController: GlobalViewController,UITextFieldDelegate,UI
     @IBOutlet weak var txtBirthdate: UITextField!
     @IBOutlet weak var txtMaleOrFemale: UITextField!
     @IBOutlet weak var txtReligion: UITextField!
+    //    @IBOutlet weak var txtHowReligion: UITextField!
     @IBOutlet weak var txtLanguages: UITextField!
     @IBOutlet weak var btnRegister: UIButton!
+    //    @IBOutlet var textFieldToBottomLayoutGuideConstraint: NSLayoutConstraint!
     
     var userRegister:User = User()
     
@@ -38,6 +40,10 @@ class ProfileRegisterViewController: GlobalViewController,UITextFieldDelegate,UI
         
         self.setDelegates()
         self.addPageGraphics()
+        
+        //        keyboardSize = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 253, UIScreen.mainScreen().bounds.size.width, 253)
+        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: "setKeyboardFrame:", name: UIKeyboardWillShowNotification, object: nil)
+        
         self.navigationItem.rightBarButtonItem = nil
         
         let tapGesture = UITapGestureRecognizer(target: self, action: "dismissControllers")
@@ -58,6 +64,10 @@ class ProfileRegisterViewController: GlobalViewController,UITextFieldDelegate,UI
         toolBar.backgroundColor = datePicker.backgroundColor
         
         datePicker.datePickerMode = UIDatePickerMode.Date
+//        var uk: NSLocale = NSLocale(localeIdentifier: "en_GB")
+//        var cal: NSCalendar = NSCalendar.currentCalendar()
+//        cal.locale = uk
+//        datePicker.calendar = cal
         
         self.txtBirthdate.inputView = datePicker
         self.txtBirthdate.inputAccessoryView = toolBar
@@ -72,6 +82,7 @@ class ProfileRegisterViewController: GlobalViewController,UITextFieldDelegate,UI
         self.txtBirthdate.delegate = self
         self.txtMaleOrFemale.delegate = self
         self.txtReligion.delegate = self
+        //        self.txtHowReligion.delegate = self
         self.txtLanguages.delegate = self
     }
     
@@ -104,12 +115,15 @@ class ProfileRegisterViewController: GlobalViewController,UITextFieldDelegate,UI
         txtBirthdate.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
         txtMaleOrFemale.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
         txtReligion.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
+        //        txtHowReligion.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
         txtLanguages.textColor = UIColor(red: 128.0/255.0, green: 137.0/255.0, blue: 148.0/255.0, alpha: 1)
+        //lblConditions.textColor = UIColor(red: 167.0/255.0, green: 51.0/255.0, blue: 255.0/255.0, alpha: 1)
         btnRegister.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         btnRegister.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Highlighted)
         btnRegister.backgroundColor = UIColor(red: 176.0/255.0, green: 0.0/255.0, blue: 247.0/255.0, alpha: 0.8)
         
         btnRegister.sizeToFit()
+        //        btnRegister.layer.cornerRadius = 3.0;
         
         //Shadows settings
         btnRegister.layer.shadowRadius = 1.0
@@ -130,6 +144,7 @@ class ProfileRegisterViewController: GlobalViewController,UITextFieldDelegate,UI
         txtBirthdate.textAlignment = textAlignment
         txtMaleOrFemale.textAlignment = textAlignment
         txtReligion.textAlignment = textAlignment
+        //        txtHowReligion.textAlignment = textAlignment
         txtLanguages.textAlignment = textAlignment
         lblMyProfile.textAlignment = textAlignment
         

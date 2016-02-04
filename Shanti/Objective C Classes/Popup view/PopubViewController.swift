@@ -100,8 +100,8 @@ class PopubViewController: UIViewController,UITableViewDataSource,UITableViewDel
         self.lblTitle.textColor = UIColor.whiteColor()
         
         self.buttomView.backgroundColor = UIColor.purpleHome()
-        self.btnApply.setTitle(NSLocalizedString("App", comment: ""), forState: .Normal)
-        self.btnApply.setTitle(NSLocalizedString("App", comment: ""), forState: .Highlighted)
+        self.btnApply.setTitle(NSLocalizedString("apply", comment: "")as String, forState: .Normal)
+        self.btnApply.setTitle(NSLocalizedString("apply", comment: "") as String, forState: .Highlighted)
         self.btnApply.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.btnApply.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Highlighted)
         self.btnApply.titleLabel?.font = UIFont(name: "spacer", size: 15.0)
@@ -178,9 +178,11 @@ class PopubViewController: UIViewController,UITableViewDataSource,UITableViewDel
             //FIXME:prefix
             if self.mode=="countryPrefixArray" || self.mode=="Language"
             {
+                //               self.selectionsArryKey.insert(self.tableList.objectAtIndex(self.tableList.count - 1) as! KeyValue, atIndex: 0)
             }
             else
             {
+                //            self.tableView(self.tableView, didSelectRowAtIndexPath: NSIndexPath(forRow: self.tableList.count - 1, inSection: 0)) //CRASH THE APP!!!
                 self.selectionsArry.insert(self.tableList.objectAtIndex(self.tableList.count - 1) as! CodeValue, atIndex: 0)
             }
         }
@@ -204,6 +206,7 @@ class PopubViewController: UIViewController,UITableViewDataSource,UITableViewDel
             {
                 self.countryPrefixArray.removeObjectAtIndex(0)
             }
+            //  println( tableList.objectAtIndex(indexPath.row) as! KeyValue)
             
             let keyVal = tableList.objectAtIndex(indexPath.row) as! KeyValue
             cell!.lblTitle.text = keyVal.nvValue
@@ -217,6 +220,7 @@ class PopubViewController: UIViewController,UITableViewDataSource,UITableViewDel
             else{
                 cell!.img.image = nil
             }
+            //    }
             
         }
         else if self.mode == "Language"
@@ -306,6 +310,15 @@ class PopubViewController: UIViewController,UITableViewDataSource,UITableViewDel
                     break
                 }
             }
+            //            }
+            //            else
+            //            {
+            //                var alert = UIAlertController(title: "Messege", message: "You can't choose more then 3 languages", preferredStyle: UIAlertControllerStyle.Alert)
+            //                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            //                self.presentViewController(alert, animated: true, completion: nil)
+            //            }
+            
+            
         }
         else
         {

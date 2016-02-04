@@ -32,6 +32,22 @@ class SearchSettingsViewController: GlobalViewController,PopupViewControllerDele
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillLayoutSubviews(){
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+//        if self.scrollView.frame.size.height > self.view.frame.size.height
+//        {
+            self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, self.scrollView.frame.origin.y
+        + self.btnApply.frame.origin.y + self.btnApply.frame.size.height+10)
+//        }
+    }
+    
+    
+    func rotated()
+    {
+        self.setViewConfig() 
+    }
+
+    
     func setViewConfig(){
         self.setNavigationConfig()
         self.setSubviewsGraphics()
@@ -58,7 +74,7 @@ class SearchSettingsViewController: GlobalViewController,PopupViewControllerDele
         var controllers = self.navigationController?.viewControllers as [AnyObject]!
         
         for view in controllers{
-            if view.isKindOfClass(MainPage){
+            if view.isKindOfClass(UsersListViewController){
                 self.navigationItem.rightBarButtonItem = nil // has to append after setNavigationConfig func
                 break
             }
@@ -83,6 +99,7 @@ class SearchSettingsViewController: GlobalViewController,PopupViewControllerDele
         self.btnApply.layer.shadowRadius = 1.0
         self.btnApply.layer.shadowOffset = CGSizeMake(0, -1.0)
         self.btnApply.layer.shadowColor = UIColor(red: 30/255.0, green: 10/255.0, blue: 40/255.0, alpha: 0.75).CGColor
+        
     }
     
     func setSubviewsFrames(){
@@ -98,6 +115,9 @@ class SearchSettingsViewController: GlobalViewController,PopupViewControllerDele
         self.religionView.frame = CGRectMake(subviewsX, self.ageRangeView.frame.origin.y + self.ageRangeView.frame.size.height, subviewsW, subviewsH)
         self.radiusView.frame = CGRectMake(subviewsX, self.religionView.frame.origin.y + self.religionView.frame.size.height, subviewsW, subviewsH)
         self.btnApply.frame = CGRectMake((UIScreen.mainScreen().bounds.size.width - subviewsW)/2, self.radiusView.frame.origin.y + self.radiusView.frame.size.height, subviewsW, btnHight)
+//        self.scrollView.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, self.btnApply.frame.size.height + self.btnApply.frame.origin.y)
+
+       
     }
     
     func setCustomViewsTitles(){

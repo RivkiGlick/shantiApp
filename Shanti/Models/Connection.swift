@@ -43,6 +43,14 @@ class Connection: NSObject {
             
             if let err = error {
                 println("err:\(err),error:\(error)")
+                var currView = (UIApplication.sharedApplication().windows[0] as! UIWindow).rootViewController!
+                if  let navCont = currView as? UINavigationController{
+                    if let lastView: UIViewController = navCont.viewControllers[navCont.viewControllers.count - 1] as? UIViewController{
+                        var alert = UIAlertController(title: "שגיאה", message: "בעית התחברות לאינטרנט", preferredStyle: UIAlertControllerStyle.Alert)
+                        alert.addAction(UIAlertAction(title: "ok", style: UIAlertActionStyle.Cancel, handler:nil))
+                        lastView.presentViewController(alert, animated: true, completion: nil)
+                    }
+                }
                 return
             }
             // Move to the UI thread

@@ -45,7 +45,6 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
     var txtBirthday = UITextField()
     var txtGender = UITextField()
     var txtReligion = UITextField()
-    //    var txtReligionLevel = UITextField()
     
     var txtProfession = UITextField()
     var txtHobby = UITextField()
@@ -67,8 +66,31 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         self.view.layoutIfNeeded()
         self.setSubviewsConfig()
         
+        let gesture = UITapGestureRecognizer(target: self, action: "someAction:")
+        self.viewPersonalDetails.addGestureRecognizer(gesture)
+        let gesture1 = UITapGestureRecognizer(target: self, action: "someAction:")
+        self.viewPersonalProfile.addGestureRecognizer(gesture1)
+        let gesture2 = UITapGestureRecognizer(target: self, action: "someAction:")
+        self.viewRestDetails.addGestureRecognizer(gesture2)
+//        self.txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(txtMoreDetails.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
+        txtMoreDetails.text = NSLocalizedString("More about yourself", comment: "")  as String
+
+        self.txtMoreDetails.delegate = self
+        txtMoreDetails.textColor = UIColor.lightGrayColor()
+        
     }
-   
+    override func viewWillLayoutSubviews() {
+        if self.viewRestDetails.frame.size.height + self.viewRestDetails.frame.origin.y  > self.view.frame.size.height
+        {
+            self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, self.scrollView.frame.size.height + 150)
+        }
+    }
+    
+    func someAction(sender:UITapGestureRecognizer)
+    {
+        self.dismissControllers()
+    }
+    
     
     func setSubviewsConfig(){
         self.currUser.nvImage = ""
@@ -86,28 +108,9 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         self.setNavigationSettings()
         self.setSubvoewsGraphics()
         self.setSubviewsFrame()
-        
-        //        let tapGesture = UITapGestureRecognizer(target: self, action: "dismissControllers:")
-        //        tapGesture.delegate = self
-        //        self.view.addGestureRecognizer(tapGesture)
-        //        self.scrollView.addGestureRecognizer(tapGesture)
-        //        self.viewImageProfile.addGestureRecognizer(tapGesture)
-        //        self.viewPersonalDetails.addGestureRecognizer(tapGesture)
-        //        self.viewPersonalProfile.addGestureRecognizer(tapGesture)
     }
     
-    //    func dismissControllers(sender: AnyObject){
-    //        for view in self.scrollView.subviews{
-    //            if view.isKindOfClass(UIView){
-    //                let currView = view as UIView
-    //                for txt in currView.subviews{
-    //                    if txt.isKindOfClass(UITextField) || txt.isKindOfClass(UITextView){
-    //                        txt.resignFirstResponder()
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
+    
     
     func setNavigationSettings(){
         self.navigationController?.navigationBarHidden = false
@@ -120,9 +123,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         saveChanges.setTitle(NSLocalizedString("Save changes", comment: "") as String/*"שמור שינויים"*/, forState: UIControlState.Highlighted)
         saveChanges.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         saveChanges.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Highlighted)
-//        saveChanges.titleLabel?.font = UIFont(name: "spacer", size: 17.5)
         saveChanges.backgroundColor = UIColor.clearColor()
-//        saveChanges.sizeToFit()
         saveChanges.frame = CGRectMake((self.navigationController!.navigationBar.bounds.size.width - saveChanges.frame.size.width)/2 - 10, (self.navigationController!.navigationBar.bounds.size.height - saveChanges.frame.size.height)/2, saveChanges.frame.size.width, saveChanges.frame.size.height)
         saveChanges.addTarget(self, action: "saveUserUpdates:", forControlEvents: UIControlEvents.TouchUpInside)
         btnSaveChanges = UIBarButtonItem(customView: saveChanges)
@@ -140,96 +141,52 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
                 view.layer.shadowRadius = 1.0
             }
         }
-       
-        
-        
-//        var btnsFont = UIFont(name: "spacer", size: 17.0)
-//        var lblsFont = UIFont(name: "spacer", size: 19.0)
         var viewsBgColor = UIColor.offwhiteBasic()
         
-//        self.view.backgroundColor = UIColor.offwhiteDark()
-//        self.scrollView.backgroundColor = UIColor.clearColor()
-        
         //viewImageProfile
-//        self.viewImageProfile.backgroundColor = viewsBgColor
         
         self.imgProfile.contentMode = UIViewContentMode.ScaleAspectFill
         self.imgProfile.clipsToBounds = true
         self.imgProfile.layer.cornerRadius = 20.0
-       
-//        self.imgProfile.layer.borderWidth = 8.0
-//        self.imgProfile.layer.borderColor = UIColor.grayMedium().CGColor
         self.imgProfile.image = self.currUser.image
         
-//        self.btnChangePic.titleLabel?.font = btnsFont
-//        self.btnChangePic.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Normal)
-//        self.btnChangePic.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Highlighted)
-        self.btnChangePic.setTitle(NSLocalizedString("Replace", comment: "") as String/*"החלף"*/, forState: UIControlState.Normal)
-        self.btnChangePic.setTitle(NSLocalizedString("Replace", comment: "") as String/*"החלף"*/, forState: UIControlState.Highlighted)
+        self.btnChangePic.setTitle(NSLocalizedString("Gallery", comment: "") as String/*"החלף"*/, forState: UIControlState.Normal)
+        self.btnChangePic.setTitle(NSLocalizedString("Gallery", comment: "") as String/*"החלף"*/, forState: UIControlState.Highlighted)
         self.btnChangePic.addTarget(self, action: "changeProfileImage:", forControlEvents:  UIControlEvents.TouchUpInside)
-//        self.btnChangePic.sizeToFit()
         
-//        self.btnTakePic.titleLabel?.font = btnsFont
-//        self.btnTakePic.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Normal)
-//        self.btnTakePic.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Highlighted)
-        self.btnTakePic.setTitle(NSLocalizedString("Take another picture", comment: "") as String/*"צלם שוב"*/, forState: UIControlState.Normal)
-        self.btnTakePic.setTitle(NSLocalizedString("Take another picture", comment: "") as String/*"צלם שוב"*/, forState: UIControlState.Highlighted)
+        self.btnTakePic.setTitle(NSLocalizedString("Camera", comment: "") as String/*"צלם שוב"*/, forState: UIControlState.Normal)
+        self.btnTakePic.setTitle(NSLocalizedString("Camera", comment: "") as String/*"צלם שוב"*/, forState: UIControlState.Highlighted)
         self.btnTakePic.addTarget(self, action: "takeNewProfileImagePic:", forControlEvents: UIControlEvents.TouchUpInside)
-//        self.btnTakePic.sizeToFit()
         
-//        self.btnDeletePic.titleLabel?.font = btnsFont
-//        self.btnDeletePic.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Normal)
-//        self.btnDeletePic.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Highlighted)
-        self.btnDeletePic.setTitle(NSLocalizedString("Delete", comment: "") as String/*"מחק"*/, forState: UIControlState.Normal)
-        self.btnDeletePic.setTitle(NSLocalizedString("Delete", comment: "") as String/*"מחק"*/, forState: UIControlState.Highlighted)
+        self.btnDeletePic.setTitle(NSLocalizedString("Remove", comment: "") as String/*"מחק"*/, forState: UIControlState.Normal)
+        self.btnDeletePic.setTitle(NSLocalizedString("Remove", comment: "") as String/*"מחק"*/, forState: UIControlState.Highlighted)
         self.btnDeletePic.addTarget(self, action: "deleteProfileImagePic:", forControlEvents: UIControlEvents.TouchUpInside)
-//        self.btnDeletePic.sizeToFit()
-        //        self.btnDeletePic.hidden = true
         
-//        self.viewSeperator1.backgroundColor = UIColor.grayMedium()
-//        self.viewSeperator2.backgroundColor = UIColor.grayMedium()
         
         //viewPersonalDetails
-//        self.viewPersonalDetails.backgroundColor = viewsBgColor
+        
         
         self.lblPersonalDetails.text = NSLocalizedString("Personal details", comment: "") as String /*"פרטים אישיים"*/
-//        self.lblPersonalDetails.sizeToFit()
         
-//        self.btnPersonalDetails.titleLabel?.font = btnsFont
-//        self.btnPersonalDetails.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Normal)
-//        self.btnPersonalDetails.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Highlighted)
         self.btnPersonalDetails.setTitle(NSLocalizedString("Edit", comment: "") as String/*"ערוך"*/, forState: UIControlState.Normal)
         self.btnPersonalDetails.setTitle(NSLocalizedString("Edit", comment: "") as String/*"ערוך"*/, forState: UIControlState.Highlighted)
-//        self.btnPersonalDetails.sizeToFit()
         self.btnPersonalDetails.addTarget(self, action: "addViewSection:", forControlEvents: UIControlEvents.TouchUpInside)
         
         //viewPersonalProfile
-//        self.viewPersonalProfile.backgroundColor = viewsBgColor
+        
         
         self.lblPersonalProfile.text = NSLocalizedString("Personal Profile", comment: "") as String/*"פרופיל אישי"*/
-//        self.lblPersonalProfile.sizeToFit()
         
-//        self.btnPersonalProfile.titleLabel?.font = btnsFont
-//        self.btnPersonalProfile.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Normal)
-//        self.btnPersonalProfile.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Highlighted)
         self.btnPersonalProfile.setTitle(NSLocalizedString("Edit", comment: "") as String/*"ערוך"*/, forState: UIControlState.Normal)
         self.btnPersonalProfile.setTitle(NSLocalizedString("Edit", comment: "") as String/*"ערוך"*/, forState: UIControlState.Highlighted)
         self.btnPersonalProfile.addTarget(self, action: "addViewSection:", forControlEvents: UIControlEvents.TouchUpInside)
-//        self.btnPersonalProfile.sizeToFit()
-        
-        //viewRestDetails
-//        self.viewRestDetails.backgroundColor = viewsBgColor
         
         self.lblRestDetails.text = NSLocalizedString("Supplemental details", comment: "") as String /*"פרטים משלימים"*/
-//        self.lblRestDetails.sizeToFit()
         
-//        self.btnRestDetails.titleLabel?.font = btnsFont
-//        self.btnRestDetails.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Normal)
-//        self.btnRestDetails.setTitleColor(UIColor.grayMedium(), forState: UIControlState.Highlighted)
         self.btnRestDetails.setTitle(NSLocalizedString("Edit", comment: "") as String/*"ערוך"*/, forState: UIControlState.Normal)
         self.btnRestDetails.setTitle(NSLocalizedString("Edit", comment: "") as String/*"ערוך"*/, forState: UIControlState.Highlighted)
         self.btnRestDetails.addTarget(self, action: "addViewSection:", forControlEvents: UIControlEvents.TouchUpInside)
-//        self.btnRestDetails.sizeToFit()
+        
     }
     
     func setSubviewsFrame(){
@@ -241,34 +198,8 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         let spaceFromleft = CGFloat(20.0)
         let spaceFromBottom = CGFloat(10.0)
         let spaceForSeperator = CGFloat(10.0)
-        
-//        self.scrollView.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height - (self.navigationController!.navigationBar.frame.origin.y + self.navigationController!.navigationBar.frame.size.height))
         self.scrollView.contentSize = CGSizeMake(UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
-//
-        //viewImageProfile
-//        self.viewImageProfile.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, viewImageH)
-//        self.imgProfile.frame = CGRectMake(self.viewImageProfile.frame.size.width - imgSpaceFromViewFrame - imgSize, imgSpaceFromViewFrame, imgSize, imgSize)
-//        self.btnChangePic.frame = CGRectMake(spaceFromleft, self.viewImageProfile.frame.size.height - spaceFromBottom - self.btnChangePic.frame.size.height, self.btnChangePic.frame.size.width, self.btnChangePic.frame.size.height)
-//        self.viewSeperator1.frame = CGRectMake(self.btnChangePic.frame.origin.x + self.btnChangePic.frame.size.width + spaceForSeperator, self.btnChangePic.frame.origin.y, 1, 22)
-//        self.btnTakePic.frame = CGRectMake(self.viewSeperator1.frame.origin.x + self.viewSeperator1.frame.size.width + spaceForSeperator, self.btnChangePic.frame.origin.y, self.btnTakePic.frame.size.width, self.btnTakePic.frame.size.height)
-//        self.viewSeperator2.frame = CGRectMake(self.btnTakePic.frame.origin.x + self.btnTakePic.frame.size.width + spaceForSeperator, self.btnTakePic.frame.origin.y, self.viewSeperator1.frame.size.width, self.viewSeperator1.frame.size.height)
-//        self.btnDeletePic.frame = CGRectMake(self.viewSeperator2.frame.origin.x + self.viewSeperator2.frame.size.width + spaceForSeperator, self.btnTakePic.frame.origin.y, self.btnDeletePic.frame.size.width, self.btnDeletePic.frame.size.height)
-//        
-        //viewPersonalDetails
-//        self.viewPersonalDetails.frame = CGRectMake(0, self.viewImageProfile.frame.origin.y + self.viewImageProfile.frame.size.height + spaceBetweenViews, UIScreen.mainScreen().bounds.size.width, viewsH)
-//        self.lblPersonalDetails.frame = CGRectMake(self.viewPersonalDetails.frame.size.width - spaceFromRight - self.lblPersonalDetails.frame.size.width, (self.viewPersonalDetails.frame.size.height - self.lblPersonalDetails.frame.size.height)/2, self.lblPersonalDetails.frame.size.width, self.lblPersonalDetails.frame.size.height)
-//        self.btnPersonalDetails.frame = CGRectMake(spaceFromleft, (self.viewPersonalDetails.frame.size.height - self.btnPersonalDetails.frame.size.height)/2, self.btnPersonalDetails.frame.size.width, self.btnPersonalDetails.frame.size.height)
-//        
-        //viewPersonalProfile
-//        self.viewPersonalProfile.frame = CGRectMake(0, self.viewPersonalDetails.frame.origin.y + self.viewPersonalDetails.frame.size.height + spaceBetweenViews, UIScreen.mainScreen().bounds.size.width, viewsH)
-//        self.lblPersonalProfile.frame = CGRectMake(self.viewPersonalProfile.frame.size.width - spaceFromRight - self.lblPersonalProfile.frame.size.width, (self.viewPersonalProfile.frame.size.height - self.lblPersonalProfile.frame.size.height)/2, self.lblPersonalProfile.frame.size.width, self.lblPersonalDetails.frame.size.height)
-//        self.btnPersonalProfile.frame = CGRectMake(spaceFromleft, (self.viewPersonalProfile.frame.size.height - self.btnPersonalProfile.frame.size.height)/2, self.btnPersonalProfile.frame.size.width, self.btnPersonalProfile.frame.size.height)
-//        
-        //viewRestDetails
-//        self.viewRestDetails.frame = CGRectMake(0, self.viewPersonalProfile.frame.origin.y + self.viewPersonalProfile.frame.size.height + spaceBetweenViews, UIScreen.mainScreen().bounds.size.width, viewsH)
-//        self.lblRestDetails.frame = CGRectMake(self.viewRestDetails.frame.size.width - spaceFromRight - self.lblRestDetails.frame.size.width, (self.viewRestDetails.frame.size.height - self.lblRestDetails.frame.size.height)/2, self.lblRestDetails.frame.size.width, self.lblRestDetails.frame.size.height)
-//        self.btnRestDetails.frame = CGRectMake(spaceFromleft, (self.viewRestDetails.frame.size.height - self.btnRestDetails.frame.size.height)/2, self.btnRestDetails.frame.size.width, self.btnRestDetails.frame.size.height)
-//        
+        
     }
     
     func changeProfileImage(sender: AnyObject){
@@ -311,7 +242,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         self.currUser.nvImage = ImageHandler.convertImageToString(ImageHandler.scaledImage(self.imgProfile.image, newSize: CGSizeMake(115, 115)))//ImageHandler.convertImageToString(ImageHandler.compressUserImage(self.imgProfile.image))
     }
     
-   func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!){
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!){
         self.dismissViewControllerAnimated(true, completion: nil)
         self.imgProfile.image = image
         self.currUser.nvImage = ImageHandler.convertImageToString(ImageHandler.scaledImage(self.imgProfile.image, newSize: CGSizeMake(115, 115)))//ImageHandler.convertImageToString(ImageHandler.compressUserImage(self.imgProfile.image))
@@ -337,19 +268,82 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         switch (ofBtn){
         case self.btnPersonalDetails:
             removeUITextField(self.viewPersonalDetails)
-          changeFrames("PersonalDetails")
+            changeFrames("PersonalDetails")
             
         case self.btnPersonalProfile:
             removeUITextField(self.viewPersonalProfile)
-           changeFrames("PersonalProfile")
+            changeFrames("PersonalProfile")
         case self.btnRestDetails:
             removeUITextField(self.viewRestDetails)
-           changeFrames("RestDetails")
+            changeFrames("RestDetails")
         default:
             break
         }
         
     }
+        func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool{
+            if text == "\n"{
+                textView.resignFirstResponder()
+                return false
+            }
+            return true
+        }
+
+    
+//    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+//        
+//                var currentText:NSString = txtMoreDetails.text
+//        let updatedText = currentText.stringByReplacingCharactersInRange(range, withString:text)
+//        
+//        if(text == "\n") {
+//            textView.resignFirstResponder()
+//            return false
+//        }
+//        
+//        
+//        if updatedText.isEmpty {
+//            
+//            txtMoreDetails.text = NSLocalizedString("More about yourself", comment: "")  as String
+//            txtMoreDetails.textColor = UIColor.lightGrayColor()
+//            txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(txtMoreDetails.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
+//            
+//            return false
+//        }
+//            
+//            
+//        else if !text.isEmpty {
+//            txtMoreDetails.text = ""
+//            txtMoreDetails.textColor = UIColor.blackColor()
+//        }
+//        
+//        return true
+//    }
+//    func textViewDidBeginEditing(textView: UITextView) {
+//        if txtMoreDetails.textColor == UIColor.lightGrayColor() {
+//            txtMoreDetails.text = nil
+//            txtMoreDetails.textColor = UIColor.blackColor()
+//        }
+//    }
+//    
+//    func textViewDidEndEditing(textView: UITextView) {
+//        if txtMoreDetails.text.isEmpty {
+//            txtMoreDetails.text = NSLocalizedString("More about yourself", comment: "")  as String
+//            txtMoreDetails.textColor = UIColor.lightGrayColor()
+//        }
+//    }
+    
+//    func textViewDidChangeSelection(textView: UITextView) {
+//        
+//        if  txtMoreDetails.text == NSLocalizedString("More about yourself", comment: "")  as String {
+//            txtMoreDetails.selectedTextRange = txtMoreDetails.textRangeFromPosition(textView.beginningOfDocument, toPosition: txtMoreDetails.beginningOfDocument)
+//        }
+//        
+//    }
+//    
+//    func textViewShouldReturn(textView: UITextView!) -> Bool {
+//        self.view.endEditing(true);
+//        return true;
+//    }
     
     // remove all UITextField From Superview
     func removeUITextField(removeFromView: UIView){
@@ -369,17 +363,17 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
             self.viewPersonalDetails.frame = CGRectMake(self.viewPersonalDetails.frame.origin.x, self.viewPersonalDetails.frame.origin.y, self.viewPersonalDetails.frame.size.width, 70.0)
             self.viewPersonalProfile.frame = CGRectMake(/*0*/self.viewPersonalDetails.frame.origin.x, self.viewPersonalDetails.frame.origin.y + self.viewPersonalDetails.frame.size.height + spaceBetweenViews, self.viewPersonalProfile.frame.size.width, self.viewPersonalProfile.frame.size.height)
             self.viewRestDetails.frame = CGRectMake(/*0*/self.viewPersonalDetails.frame.origin.x, self.viewPersonalProfile.frame.origin.y + self.viewPersonalProfile.frame.size.height + spaceBetweenViews, self.viewRestDetails.frame.size.width, self.viewRestDetails.frame.size.height)
-           
+            
         case "PersonalProfile":
             self.viewPersonalDetails.frame = CGRectMake(self.viewPersonalDetails.frame.origin.x, self.viewPersonalDetails.frame.origin.y, self.viewPersonalDetails.frame.size.width, self.viewPersonalDetails.frame.size.height)
             self.viewPersonalProfile.frame = CGRectMake(/*0*/self.viewPersonalDetails.frame.origin.x, self.viewPersonalDetails.frame.origin.y + self.viewPersonalDetails.frame.size.height + spaceBetweenViews, self.viewPersonalProfile.frame.size.width, 70.0)
             self.viewRestDetails.frame = CGRectMake(/*0*/self.viewPersonalDetails.frame.origin.x, self.viewPersonalProfile.frame.origin.y + self.viewPersonalProfile.frame.size.height + spaceBetweenViews, self.viewRestDetails.frame.size.width, self.viewRestDetails.frame.size.height)
-        
+            
         case "RestDetails":
             self.viewPersonalDetails.frame = CGRectMake(self.viewPersonalDetails.frame.origin.x, self.viewPersonalDetails.frame.origin.y, self.viewPersonalDetails.frame.size.width, viewPersonalDetails.frame.size.height)
             self.viewPersonalProfile.frame = CGRectMake(/*0*/self.viewPersonalDetails.frame.origin.x, self.viewPersonalDetails.frame.origin.y + self.viewPersonalDetails.frame.size.height + spaceBetweenViews, self.viewPersonalProfile.frame.size.width, self.viewPersonalProfile.frame.size.height)
             self.viewRestDetails.frame = CGRectMake(/*0*/self.viewPersonalDetails.frame.origin.x, self.viewPersonalProfile.frame.origin.y + self.viewPersonalProfile.frame.size.height + spaceBetweenViews, self.viewRestDetails.frame.size.width, 70.0)
-      
+            
         default:
             break
         }
@@ -415,11 +409,22 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         let spaceBeweenTxt = CGFloat(5.5)
         let txtsArry: [UITextField] = [/*self.txtEmail,self.txtPassword,*/self.txtFirstName,self.txtLastName,self.txtPhone]
         
+        
+        
         for txt in txtsArry{
+            
+            var space: CGFloat = 10
+            var textAlignment: NSTextAlignment = .Left
+            let languageId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
+            if languageId == "he"{
+                textAlignment = .Right
+                space = -space
+            }
+            
             txt.backgroundColor = txtBgColor
-            txt.textAlignment = NSTextAlignment.Right
+            txt.textAlignment = textAlignment
+            txt.layer.sublayerTransform = CATransform3DMakeTranslation(space,0,0)
             txt.textColor = textColor
-//            txt.font = txtsFont
             txt.layer.cornerRadius = 1.5
             txt.layer.borderWidth = 1
             txt.layer.borderColor = UIColor.offwhiteDark().CGColor
@@ -485,10 +490,19 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         let txtsArry: [UITextField] = [self.txtCountry,self.txtBirthday,self.txtGender,self.txtReligion/*,self.txtReligionLevel*/]
         
         for txt in txtsArry{
+            
+            var space: CGFloat = 10
+            var textAlignment: NSTextAlignment = .Left
+            let languageId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
+            if languageId == "he"{
+                textAlignment = .Right
+                space = -space
+            }
+            
             txt.backgroundColor = txtBgColor
-            txt.textAlignment = NSTextAlignment.Right
+            txt.textAlignment = textAlignment
+            txt.layer.sublayerTransform = CATransform3DMakeTranslation(space,0,0)
             txt.textColor = textColor
-//            txt.font = txtsFont
             txt.layer.cornerRadius = 1.5
             txt.layer.borderWidth = 1
             txt.layer.borderColor = UIColor.offwhiteDark().CGColor
@@ -514,10 +528,6 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
                 txt.placeholder =  NSLocalizedString("Faith", comment: "") as String/*"דת"*/
                 break
                 
-                //            case self.txtReligionLevel:
-                //                txt.placeholder = "יחס לדת"
-                //                break
-                
             default:
                 break
             }
@@ -535,7 +545,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         self.pushViews(viewPersonalProfile)
         
         UIView.commitAnimations()
-  
+        
         
     }
     
@@ -554,12 +564,22 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         let txtsArry: [UIView] = [self.txtProfession,self.txtHobby,self.txtLanguages,self.txtMoreDetails]
         
         for txt in txtsArry{
-            if txt.isKindOfClass(UITextField){
+            if txt.isKindOfClass(UITextField)
+            {
+                var space: CGFloat = 10
+                var textAlignment: NSTextAlignment = .Left
+                let languageId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
+                if languageId == "he"{
+                    textAlignment = .Right
+                    space = -space
+                }
+                
+                
                 let curTxt = txt as! UITextField
                 curTxt.backgroundColor = txtBgColor
-                curTxt.textAlignment = NSTextAlignment.Right
+                curTxt.textAlignment = textAlignment
+                curTxt.layer.sublayerTransform = CATransform3DMakeTranslation(space,0,0)
                 curTxt.textColor = textColor
-//                curTxt.font = txtsFont
                 curTxt.layer.cornerRadius = 1.5
                 curTxt.layer.borderWidth = 1
                 curTxt.layer.borderColor = UIColor.offwhiteDark().CGColor
@@ -584,12 +604,22 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
                     break
                 }
                 
-            }else if txt.isKindOfClass(UITextView){
+            }
+            else if txt.isKindOfClass(UITextView)
+            {
+                var space: CGFloat = 10
+                var textAlignment: NSTextAlignment = .Left
+                let languageId = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as! String
+                if languageId == "he"{
+                    textAlignment = .Right
+                    space = -space
+                }
+                
                 let curTxt = txt as! UITextView
                 curTxt.backgroundColor = txtBgColor
-                curTxt.textAlignment = NSTextAlignment.Right
+                curTxt.textAlignment = textAlignment
+                curTxt.layer.sublayerTransform = CATransform3DMakeTranslation(space,0,0)
                 curTxt.textColor = textColor
-//                curTxt.font = txtsFont
                 curTxt.layer.cornerRadius = 1.5
                 curTxt.layer.borderWidth = 1
                 curTxt.layer.borderColor = UIColor.offwhiteDark().CGColor
@@ -599,7 +629,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
                 
                 switch (curTxt){
                 case self.txtMoreDetails:
-                    curTxt.text = NSLocalizedString("More about yourself", comment: "") as String  + "... "/* "עוד על עצמך..."*/
+                    curTxt.text = NSLocalizedString("More about yourself", comment: "") as String /* "עוד על עצמך..."*/
                     break
                     
                 default:
@@ -624,8 +654,8 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         self.pushViews(viewRestDetails)
         
         UIView.commitAnimations()
-  
-       
+        
+        
     }
     
     func pushViews(underView: UIView){
@@ -634,7 +664,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
                 if view.frame.origin.y > underView.frame.origin.y{
                     if (view as! UIView) == self.viewPersonalDetails{
                         println("viewPersonalDetails")
-
+                        
                     }
                     
                     if (view as! UIView) == self.viewPersonalProfile{//viewPersonalProfile{
@@ -645,24 +675,47 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
                     if (view as! UIView) == self.viewRestDetails{
                         println("**********viewRestDetails")
                         //
-                                  (view as! UIView).frame = CGRectMake(view.frame.origin.x, self.viewPersonalDetails.frame.origin.y + self.viewPersonalDetails.frame.size.height + spaceBetweenViews+/*self.viewPersonalProfile.frame.origin.y +*/ self.viewPersonalProfile.frame.size.height + spaceBetweenViews, view.frame.size.width, view.frame.size.height)
-                        
-//                        (view as! UIView).frame = CGRectMake(view.frame.origin.x, self.viewPersonalProfile.frame.origin.y + self.viewPersonalProfile.frame.size.height + spaceBetweenViews, view.frame.size.width, view.frame.size.height)
+                        (view as! UIView).frame = CGRectMake(view.frame.origin.x, self.viewPersonalDetails.frame.origin.y + self.viewPersonalDetails.frame.size.height + spaceBetweenViews+/*self.viewPersonalProfile.frame.origin.y +*/ self.viewPersonalProfile.frame.size.height + spaceBetweenViews, view.frame.size.width, view.frame.size.height)
                     }
-//
+                    //
                 }
             }
         }
         
         self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.viewRestDetails.frame.origin.y + self.viewRestDetails.frame.size.height + spaceBetweenViews)
-
-       
+        
+        
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool{
+        
         textField.resignFirstResponder()
         return true
     }
+    
+    func dismissControllers(){
+        //        UIView.beginAnimations(nil, context: nil)
+        //        UIView.setAnimationDuration(1)
+        
+        self.txtFirstName.resignFirstResponder()
+        self.txtLastName.resignFirstResponder()
+        self.txtPhone.resignFirstResponder()
+        
+        self.txtCountry.resignFirstResponder()
+        self.txtBirthday.resignFirstResponder()
+        self.txtGender.resignFirstResponder()
+        self.txtReligion.resignFirstResponder()
+        
+        self.txtProfession.resignFirstResponder()
+        self.txtHobby.resignFirstResponder()
+        self.txtLanguages.resignFirstResponder()
+        self.txtMoreDetails.resignFirstResponder()
+        
+        //        self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)
+        
+        //        UIView.commitAnimations()
+    }
+    
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         
@@ -674,7 +727,8 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         }
         
         
-        if textField == self.txtEmail || textField == self.txtPassword || textField == self.txtFirstName || textField == self.txtLastName || textField == self.txtPhone || textField == self.txtBirthday || textField == self.txtProfession || textField == self.txtHobby {
+        if textField == self.txtEmail || textField == self.txtPassword || textField == self.txtFirstName || textField == self.txtLastName || textField == self.txtPhone || textField == self.txtBirthday || textField == self.txtProfession || textField == self.txtHobby
+        {
             return true
         }
         
@@ -696,11 +750,6 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         case self.txtReligion:
             popupView.mode = "Religion"
             break
-            
-            //        case self.txtReligionLevel:
-            //            popupView.mode = "ReligionLevel"
-            //            break
-            
         case txtLanguages:
             popupView.mode = "Language"
         default: break
@@ -712,6 +761,28 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         
         return false
     }
+    
+    //    func didEndSelectionKey(arraySelections: [CodeValue], mode: String)
+    //    {
+    //
+    //        self.dismissPopupViewControllerWithanimationType(MJPopupViewAnimationFade)
+    //
+    //
+    //        if arraySelections.count > 0{
+    //            self.txtLanguages.text = ""
+    //            self.currUser.oLanguages.removeAllObjects()
+    //            for (index,element) in enumerate(arraySelections) {
+    //                var val = element.iKeyId
+    //                self.currUser.oLanguages.addObject(element)
+    //                if element.iKeyId == -1 {
+    //                    self.txtLanguages.text = nil
+    //                }else{
+    //                    self.txtLanguages.text = self.txtLanguages.text + element.nvValue + ", "
+    //                }
+    //            }
+    //        }
+    //    }
+    
     
     func didEndSelection(arraySelections: [CodeValue], mode: String) {
         self.dismissPopupViewControllerWithanimationType(MJPopupViewAnimationFade)
@@ -896,6 +967,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
     }
     
     func dismissKeyboard(){
+        self.txtPhone.resignFirstResponder()
         for view in self.scrollView.subviews{
             if view.isKindOfClass(UIView){
                 for v in view.subviews{
@@ -907,7 +979,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         }
     }
     func textViewDidBeginEditing(textView: UITextView){
-        if textView.text==NSLocalizedString("More about yourself", comment: "") as String  + "..." /*"עוד על עצמך..."*/ {
+        if textView.text==NSLocalizedString("More about yourself", comment: "") as String  /*"עוד על עצמך..."*/ {
             textView.text = ""
         }
         animateTextView(textView, up: true)
@@ -915,26 +987,20 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
     }
     func textViewDidEndEditing(textView: UITextView){
         if textView.text=="" || textView.text == " "{
-            textView.text = NSLocalizedString("More about yourself", comment: "") as String  + "..."  /*"עוד על עצמך..."*/
+            textView.text = NSLocalizedString("More about yourself", comment: "") as String  /*"עוד על עצמך..."*/
         }
+        textView.resignFirstResponder()
         animateTextView(textView, up: false)
     }
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool{
-        if text == "\n"{
-            textView.resignFirstResponder()
-            return false;
-        }
-        return true
-    }
+   
     
     func textFieldDidBeginEditing(textField: UITextField){
         animateTextField(textField, up: true)
     }
     
-    func animateTextField(textField: UITextField, up: Bool){
-        
-        
-        var keyboardSize = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 253, UIScreen.mainScreen().bounds.size.width, 253)
+    func animateTextField(textField: UITextField, up: Bool)
+    {
+        var keyboardSize = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 258, UIScreen.mainScreen().bounds.size.width, 258)
         let movementDistance: CGFloat = keyboardSize.height
         let movement = (up ? -movementDistance : movementDistance)
         let currentView : UIView = textField.superview!
@@ -952,6 +1018,7 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
         var keyboardSize = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 253, UIScreen.mainScreen().bounds.size.width, 253)
         let movementDistance: CGFloat = keyboardSize.height
         let movement = (up ? -movementDistance : movementDistance)
+        //+ 20
         let currentView : UIView = textView.superview!
         if keyboardSize.origin.y <= textView.frame.origin.y + currentView.frame.origin.y + 60{
             UIView.beginAnimations("animateTextField", context: nil)
@@ -961,12 +1028,28 @@ class UserProfileViewController: GlobalViewController,UINavigationControllerDele
             UIView.commitAnimations()
             
         }
-
+        
     }
-    //FIXME:prefix
+    //    //FIXME:prefix
     func didEndSelectionKey(arraySelections: [KeyValue], mode: String)
-        
     {
-        
+        self.dismissPopupViewControllerWithanimationType(MJPopupViewAnimationFade)
+        if arraySelections.count > 0
+        {
+            self.txtLanguages.text = ""
+            self.currUser.oLanguages.removeAllObjects()
+            for (index,element) in enumerate(arraySelections)
+            {
+                if element.nvKey != "-1"
+                {
+                    self.currUser.oLanguages.addObject(element)
+                    self.txtLanguages.text = self.txtLanguages.text + element.nvValue + ", "
+                }
+            }
+        }
+        else
+        {
+            self.txtLanguages.text = nil
+        }
     }
 }

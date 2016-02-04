@@ -7,34 +7,34 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>BBCCD4EB-AC89-4C18-B1C3-5136474E992F</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Shanti</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>9DD0D4C64C46A04870CCA1A0B8D143528B85F964</key>
-		<string>https://github.com/RivkiGlick/shantiApp.git</string>
+		<key>FA4F1F576C1BA43A090EE3C8DC46DC4C201C2940</key>
+		<string>https://github.com/Shantiapp/Shantiapp-IoS.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Shanti.xcodeproj</string>
+	<string>Shanti.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>9DD0D4C64C46A04870CCA1A0B8D143528B85F964</key>
+		<key>FA4F1F576C1BA43A090EE3C8DC46DC4C201C2940</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/RivkiGlick/shantiApp.git</string>
+	<string>https://github.com/Shantiapp/Shantiapp-IoS.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>9DD0D4C64C46A04870CCA1A0B8D143528B85F964</string>
+	<string>FA4F1F576C1BA43A090EE3C8DC46DC4C201C2940</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>9DD0D4C64C46A04870CCA1A0B8D143528B85F964</string>
+			<string>FA4F1F576C1BA43A090EE3C8DC46DC4C201C2940</string>
 			<key>IDESourceControlWCCName</key>
-			<string>shantiApp</string>
+			<string>Shantiapp-IoS</string>
 		</dict>
 	</array>
 </dict>

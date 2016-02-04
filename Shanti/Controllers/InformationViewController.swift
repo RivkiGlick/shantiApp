@@ -17,11 +17,15 @@ class InformationViewController: GlobalViewController {
     @IBOutlet weak var imgSearch: UIImageView!
     @IBOutlet weak var imgBg: UIImageView!
     
+    var bgView:UIView = UIView()
+    
+    @IBOutlet weak var lblComing: UILabel!
     var placesTypes: NSMutableArray = NSMutableArray()
     var lblTitle = UILabel()
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        lblComing.text = NSLocalizedString("Coming soon", comment: "")
+        viewTop.hidden = true
         self.getTypeListFromServer()
         self.setSubviewsConfig()
         self.lblTitle.text =  NSLocalizedString("This option will be supported in future versions", comment: "")
@@ -29,13 +33,68 @@ class InformationViewController: GlobalViewController {
         self.lblTitle.font = UIFont(name:"spacer" ,size:17)
         self.lblTitle.sizeToFit()
         self.lblTitle.center = self.view.center
-//      self.view.addSubview(self.lblTitle)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+        self.imgBg.image = UIImage(named: "information")!
+        }
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+        self.imgBg.image = UIImage(named: "infoBg")!
+        }
+        
+        
+      //self.view.addSubview(self.lblTitle)
+        
     }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+//    override func viewWillAppear(animated: Bool) {
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+//    }
+    override func viewWillAppear(animated: Bool) {
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            self.imgBg.image = UIImage(named: "information")!
+        }
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+          self.imgBg.image = UIImage(named: "infoBg")!
+        }
+
+        
+    }
+    
+    override func viewWillLayoutSubviews() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            self.imgBg.image = UIImage(named: "information")!
+
+            self.removeButton()
+            self.setSubviews()
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            self.imgBg.image = UIImage(named: "infoBg")!
+
+            self.removeButton()
+            self.setSubviews()
+
+        }
+        
+    }
+
     
     func getTypeListFromServer(){
         var generic = Generic()
@@ -65,8 +124,11 @@ class InformationViewController: GlobalViewController {
         self.imgBg.image = UIImage(named: "infoBg")!
         if self.viewTop.hidden == false{
             self.imgBg.frame = CGRectMake(0, self.viewTop.frame.origin.y + self.viewTop.frame.size.height, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
+
+
         }else{
-            self.imgBg.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height)
+            self.imgBg.frame = CGRectMake(0, 0, self.imgBg.frame.size.width,self.imgBg.frame.size.height)
+
         }
         
     }
@@ -91,8 +153,8 @@ class InformationViewController: GlobalViewController {
         self.txtSearch.backgroundColor = UIColor.clearColor()
         self.txtSearch.layer.borderWidth = 1.5
         self.txtSearch.layer.borderColor = UIColor.purpleLight().CGColor
-        self.imgSearch.hidden = false
-        self.btnSearch.hidden = false
+        self.imgSearch.hidden = true
+        self.btnSearch.hidden = true
         
         let topViewH = CGFloat(43.0)
         let spaceFromLeft = CGFloat(17.5)
@@ -103,18 +165,26 @@ class InformationViewController: GlobalViewController {
         self.viewTop.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, topViewH)
         self.txtSearch.frame = CGRectMake(spaceFromLeft * 2, self.viewTop.frame.size.height - txtH - spaceFromButtom, txtW, txtH)
         
-        self.viewTop.hidden = false
+        self.viewTop.hidden = true
     }
     
     func setSubviews(){
-        var nextY = CGFloat(self.viewTop.frame.origin.y + self.viewTop.frame.size.height + 43.0)
-        let spaceFromeSides = CGFloat(14.0)
+        var nextY = CGFloat(0.0)
+        let spaceFromeSides = CGFloat(0.0)
         let spaceBetweenItemsW = CGFloat(4.0)
         let spaceBetweenItemsH = CGFloat(5.0)
         let itemSize = CGFloat(93.5)
         var nextX = spaceFromeSides
         
-        for currPlace in self.placesTypes{
+        
+//        self.view.bringSubviewToFront(bgView)
+        
+        var x = CGFloat(14.0)
+        let y = CGFloat(self.viewTop.frame.origin.y + self.viewTop.frame.size.height + 43.0)
+        var width = CGFloat(0.0)
+        
+        for currPlace in self.placesTypes
+        {
             var placeBtn = UIButton(frame: CGRectMake(nextX, nextY, itemSize, itemSize))
             placeBtn.tag = self.placesTypes.indexOfObject(currPlace)
             placeBtn.layer.borderWidth = 1
@@ -141,13 +211,9 @@ class InformationViewController: GlobalViewController {
                 }else{
                     lblIcon.font = UIFont(name: font, size: 25)
                 }
-                
-//                lblIcon.font = UIFont(name: newFontName, size: 50)
-//                lblIcon.text = (currPlace as! PlaceCategory).nvFontCode
                 lblIcon.textColor = UIColor.whiteColor()
                 lblIcon.textAlignment = NSTextAlignment.Center
                 lblIcon.sizeToFit()
-//                lblIcon.backgroundColor = UIColor.blueColor()
                 
                 var placeNameLbl = UILabel()
                 placeNameLbl.text = (currPlace as! PlaceCategory).nvPlaceName
@@ -155,7 +221,6 @@ class InformationViewController: GlobalViewController {
                 placeNameLbl.font = UIFont(name: "spacer", size: 12.5)
                 placeNameLbl.textAlignment = NSTextAlignment.Center
                 placeNameLbl.sizeToFit()
-//                placeNameLbl.backgroundColor = UIColor.redColor()
                 
                 let spaceBetweenIconToTitle = CGFloat(3.0)
                 let iconY = CGFloat((placeBtn.frame.size.height - (lblIcon.frame.size.height + spaceBetweenIconToTitle + placeNameLbl.frame.size.height))/2)
@@ -166,7 +231,9 @@ class InformationViewController: GlobalViewController {
                 placeBtn.addSubview(lblIcon)
                 placeBtn.addSubview(placeNameLbl)
                 
-            }else{
+            }
+            else
+            {
                 placeBtn.titleLabel?.font = UIFont(name: "spacer", size: 12.5)
                 placeBtn.setTitle((currPlace as! PlaceCategory).nvPlaceName, forState: UIControlState.Normal)
                 placeBtn.setTitle((currPlace as! PlaceCategory).nvPlaceName, forState: UIControlState.Highlighted)
@@ -176,13 +243,29 @@ class InformationViewController: GlobalViewController {
             placeBtn.addTarget(self, action: "getFullInfoOnCategory:", forControlEvents: UIControlEvents.TouchUpInside)
             nextX += spaceBetweenItemsW + itemSize
             if (UIScreen.mainScreen().bounds.size.width - nextX - itemSize < spaceFromeSides){
+                 width = nextX
+                x = (UIScreen.mainScreen().bounds.size.width - nextX)/2
                 nextX = spaceFromeSides
                 nextY += itemSize + spaceBetweenItemsH
+                
             }
             
-            self.view.addSubview(placeBtn)
+            self.bgView.addSubview(placeBtn)
+        }
+        self.bgView.backgroundColor = UIColor.clearColor()
+        self.bgView.frame = CGRectMake(x, y, width, nextY)
+        self.view.addSubview(self.bgView)
+    }
+    
+    func removeButton() {
+        let subviews = self.bgView.subviews as! [UIView]
+        for v in subviews {
+            if v.isKindOfClass(UIButton){
+            v.removeFromSuperview()
+            }
         }
     }
+
     
     
     

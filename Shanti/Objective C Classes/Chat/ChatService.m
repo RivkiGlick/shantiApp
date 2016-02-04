@@ -106,8 +106,11 @@ typedef void(^CompletionBlockWithResult)(NSArray *);
 }
 
 - (void)chatRoomDidEnter:(QBChatRoom *)room{
+    if (self.joinRoomCompletionBlock != NULL)
+    {
     self.joinRoomCompletionBlock(room);
     self.joinRoomCompletionBlock = nil;
+    }
 }
 
 - (void)chatDidReceiveListOfRooms:(NSArray *)rooms{

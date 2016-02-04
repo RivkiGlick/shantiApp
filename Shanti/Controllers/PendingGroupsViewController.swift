@@ -16,10 +16,23 @@ class PendingGroupsViewController: GlobalViewController,UITableViewDataSource,UI
     var generic = Generic()
     var approvedGroups = NSMutableArray()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setSubviewsConfig()
         self.getPendingGroupsInfoFromServer()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    func rotated()
+    {
+        self.removeSubviews()
+        self.setSubviewsConfig()
+        self.getPendingGroupsInfoFromServer()
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -44,15 +57,21 @@ class PendingGroupsViewController: GlobalViewController,UITableViewDataSource,UI
     }
     
     func setSubviewsDelegate(){
+        if self.tableView != nil
+        {
         self.tableView.registerNib(UINib(nibName: "PendingGroupsTableViewCell", bundle: nil), forCellReuseIdentifier: "PendingGroupsTableViewCell")
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        }
     }
     
     func setSubviewsGraphics(){
+        if self.tableView != nil
+        {
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         self.tableView.backgroundColor = UIColor.clearColor()
         self.tableView.separatorColor = UIColor.whiteColor()
+        }
     }
     
     func getPendingGroupsInfoFromServer(){
@@ -63,19 +82,30 @@ class PendingGroupsViewController: GlobalViewController,UITableViewDataSource,UI
             println("GetUserPendingGroups:\(strData)")
             var err: NSError?
             var json = NSJSONSerialization.JSONObjectWithData(data, options: .MutableLeaves, error: &err) as? NSArray
-            if json != nil{
-                if let parseJSON = json {
-                    if parseJSON.count > 0{
+            if json != nil
+            {
+                if let parseJSON = json
+                {
+                    if parseJSON.count > 0
+                    {
                         for groupDict in parseJSON{
                             self.pendingGroups.addObject(Group.parseGroupDictionary(groupDict as! NSDictionary))
                         }
-                    }else{
+                    }
+                    else
+                    {
                         self.addInfoViews()
                     }
                     
                 }
-                self.tableView.reloadData()
-            }else{
+                else
+                {
+                   self.tableView.reloadData()
+                }
+                
+            }
+            else
+            {
                 self.addInfoViews()
             }
             self.generic.hideNativeActivityIndicator(self)
@@ -83,7 +113,10 @@ class PendingGroupsViewController: GlobalViewController,UITableViewDataSource,UI
     }
     
     func setSubviewsFrames(){
+        if self.tableView != nil
+        {
         self.tableView.frame = CGRectMake(0,0,UIScreen.mainScreen().bounds.size.width,UIScreen.mainScreen().bounds.size.height)
+    }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
@@ -216,4 +249,18 @@ class PendingGroupsViewController: GlobalViewController,UITableViewDataSource,UI
         
         self.view.addSubview(view)
     }
+    
+    func removeSubviews()
+    {
+        let subviews = self.view.subviews as! [UIView]
+        for v in subviews {
+            if v.isKindOfClass(UIView)
+            {
+                    v.removeFromSuperview()
+                
+                }
+                
+            }
+            
+        }
 }

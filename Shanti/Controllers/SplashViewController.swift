@@ -12,7 +12,9 @@ class SplashViewController: UIViewController {
     var cameFromNotification: Bool = false
     var userInfo: [NSObject : AnyObject]?
     var generic: Generic?
+    var check = Bool()
     
+    @IBOutlet weak var viewImgLogoLandscape: UIView!
     var frontNavigationController: UINavigationController!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +26,32 @@ class SplashViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    override func viewWillLayoutSubviews() {
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            check = true
+            print("landscape")
+            self.view.addSubview(viewImgLogoLandscape)
+            
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            print("Portrait")
+            if check
+            {
+            self.view.sendSubviewToBack(viewImgLogoLandscape)
+            }
+        }
+        
+    }
+
+    
     func getNavigationController(){
         var rearViewController = RearViewController()
         var rearNavigationController = UINavigationController(rootViewController: rearViewController)

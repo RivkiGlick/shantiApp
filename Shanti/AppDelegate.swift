@@ -16,8 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     //    let googleMapsApiKey = "AIzaSyDpcCd6zV9F8aTkvf5k-dGh7XiDQjrxwiE"
     // let googleMapsApiKey = "AIzaSyAhOGrkx1oHPuJNIPbByr_FwED2c1jNgbo" //shanti1
 //    let googleMapsApiKey = "AIzaSyDfavKr1htnwcDILYnmmau97xbQseG5pQo" //shantiApple
-    let googleMapsApiKey = "AIzaSyBN-ekv7jSgCBz3jdjG8i4l32B5bcfEVfA" //ShantiAppApiKey_Ios
+    //let googleMapsApiKey = "AIzaSyDgwix8uC1Yrvxnj_PSe828Fy5GGwmZz1w" //shantiAppApiKey
 //
+     let googleMapsApiKey = "AIzaSyBN-ekv7jSgCBz3jdjG8i4l32B5bcfEVfA" //ShantiAppApiKey_Ios
     
     var generic = Generic()
     var cameFromlaunchOptions: Bool = false
@@ -31,12 +32,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     var isLoginQbError: Bool = false
     var FiilData: Bool = false
     var didTap = false
-    var isGoogle:Bool = false
-    var isFaceBook:Bool = false
+//    var generic = Generic()
+//    var isGoogle:Bool = false
+//    var isFaceBook:Bool = false
+    var landcape = Bool()
+    var portrait = Bool()
+    var mainInfo = MainInfoViewController()
+    
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "rotated", name: UIDeviceOrientationDidChangeNotification, object: nil)
         GMSServices.provideAPIKey(googleMapsApiKey)
-        
         //Mint.sharedInstance().initAndStartSession("907bf815")
         
         #if DEBUG
@@ -55,11 +61,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
                 data -> Void in
                 println("finish writeToWebitLog")
             })
-            //live
-            //        QBSettings.setAccountKey("52Kp1sQpBtNsqKx3MYMf")//Account key
-            //        QBApplication.sharedApplication().applicationId = 22214
-            //        QBConnection.registerServiceKey("qZP9GXutF5EdXvS")//Authorization key
-            //        QBConnection.registerServiceSecret("pcytS4MvD5nF57H")//Authorization secret
             
             #else
             //             QuickBlox
@@ -71,17 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
             {
             self.setListUsers()
             }
-            //            var dict = ["ProjectName":"Shanti","FunctionName":"QuickBlox Production","ToUTL":"Production"]
-            //            Connection.writeToWebitLog(dict, completion: {
-            //            data -> Void in
-            //            println("finish writeToWebitLog")
-            //            })
-            
         #endif
-        
-        //        #if DEBUG
-        //            QBSettings.useProductionEnvironmentForPushNotifications = true
-        //        #endif
         
         if (UIDevice.currentDevice().systemVersion as NSString).doubleValue >= 8.0{
             // iOS 8 Notifications
@@ -91,17 +82,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
             // iOS < 8 Notifications
             application.registerForRemoteNotificationTypes(.Badge | .Sound | .Alert)
         }
+    //mainInfo.start()
         
        return FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
 //        return true
     }
     
+    func rotated()
+    {
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            print("landscape")
+            landcape = true
+            portrait = false
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            print("Portrait")
+            portrait = true
+            landcape = false
+        }
+        
+    }
     
     func application(application: UIApplication,openURL url: NSURL,sourceApplication: String?,annotation: AnyObject?) -> Bool {
         var whatToReturn = true
         var loginWay = NSUserDefaults.standardUserDefaults().valueForKey("loginWay") as? String
-        
+
         if loginWay == "google+"
         {
             whatToReturn = GPPURLHandler.handleURL(url, sourceApplication:sourceApplication, annotation: annotation)
@@ -249,12 +258,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
                                     }))
                                     
                                     lastView.presentViewController(alert, animated: true, completion: nil)
-                                    
-                                    //                                    let delay = 5.0 * Double(NSEC_PER_SEC)
-                                    //                                    var time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-                                    //                                    dispatch_after(time, dispatch_get_main_queue(), {
-                                    //                                        alert.dismissViewControllerAnimated(true, completion: nil)
-                                    //                                    })
                                 }
                             }
                         }
@@ -351,8 +354,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     
     func applicationDidBecomeActive(application: UIApplication){
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-        //        UIApplication.sharedApplication().cancelAllLocalNotifications()
-//        FBSDKAppEvents.activateApp()
         self.sendDeviceTokenToServer()
     }
 
@@ -537,13 +538,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
                                     println("finish writeToWebitLog")
                                 })
                             }
-                            
-                            //                    self.tableView.reloadData()
                         }
                         
                     }
                 })
-                // }
                 
                 
             }
